@@ -1,0 +1,493 @@
+ <!DOCTYPE html>
+ <html lang="en">
+
+ <head>
+
+     <meta charset="utf-8">
+     <title>PDF editor</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <meta name="author" content="">
+     <link rel="stylesheet" href="./css/style.css">
+     <link rel="stylesheet" href="colorpicker/colorpicker.css">
+
+
+     <script>
+         ;
+         (function() {
+             const prefix = 'ir-';
+             window.$ir = {
+                 prefix(str) {
+                     return `${prefix}${str}`;
+                 },
+                 isSystem: e => {
+                     const target = e.target ? e.target : e;
+                     return !!target.closest('.toolbox,.dialog,#gtx-trans,.tox,.handle,.ir-toolbar');
+                 }
+             }
+
+         })();
+     </script>
+
+
+     <script src="./tinymce/tinymce.min.js"></script>
+
+
+
+     <script src="./moveable.min.js"></script>
+     <script type="module">
+         import {
+
+
+             Editor,
+
+         } from "./js/mount.js";
+
+         addEventListener('DOMContentLoaded', () => {
+             window.pdfEditor = new Editor({
+                 editor: document.querySelector('#editor'),
+                 sections: document.querySelector('.sections'),
+             });
+
+             // const imgModule = new CreateModule({
+             const imgModule = pdfEditor.createModule({
+                 name: 'image',
+                 schema: [
+
+                     {
+                         label: 'Image',
+                         props: {
+                             accept: 'image/*',
+                             type: 'file',
+                             multiple: false
+
+                         },
+                         name: 'file',
+                     },
+                     {
+                         label: 'Radius',
+                         props: {
+
+                             type: 'number',
+                             min: 0,
+                             max: 200,
+                             appendix: 'px',
+                         },
+
+                         name: 'radius',
+                     },
+                 ],
+                 defaults: {
+                     file: 'https://images.pexels.com/photos/4762770/pexels-photo-4762770.jpeg',
+                     radius: 10
+                 }
+             });
+
+             imgModule.addTemplate("default", (target, options) => {
+
+                 const radius = options.radius || 0;
+
+                 target.innerHTML = `<img src="${options.file}" 
+    style="width: 100%;height: 100%;position:absolute;top:0;left:0;object-fit:cover; border-radius: ${radius}">`;
+             });
+
+
+
+
+             imgModule.addTemplate("star", (target, options) => {
+                 const clip = `url('data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3CclipPath id="clipPath" clipPathUnits="objectBoundingBox"%3E%3Cpolygon points=".5,0 .8,1 0,.4 1,.4 .2,1" /%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E#clipPath')`;
+
+                 target.innerHTML = `<img src="${options.file}" style="width: 100%;height: 100%;position:absolute;top:0;left:0;object-fit:cover; mask-size: contain;">`;
+                 target.querySelector('img').style.clipPath = clip;
+
+
+
+             })
+             imgModule.addTemplate("heart", (target, options) => {
+
+                 const id = `id${Date.now()}`
+
+                 const mask = `
+ 
+
+<svg height="0" width="0">
+  
+ 
+  <mask id="${id}">
+    <path
+      d="M20,70 A40,40,0,0,1,100,70 A40,40,0,0,1,180,70 Q180,130,100,190 Q20,130,20,70 Z"
+      fill="green"
+      stroke="white"
+      stroke-width="20" />
+  </mask>
+ 
+</svg>
+
+ 
+
+    
+    
+    `;
+
+                 target.innerHTML = `${mask}<img src="${options.file}" 
+    style="width: 100%;height: 100%;position:absolute;top:0;left:0;object-fit:cover;   mask-image: url(#${id});mask-size: contain;">`;
+             });
+
+         })
+     </script>
+
+ </head>
+
+ <body>
+
+     <div class="container">
+         <div class="ir-toolbar-container">
+             <div class="ir-toolbar">
+
+                 <div>
+                     <button onclick="pdfEditor.stateManager.undo()">Undo</button>
+                     <button onclick="pdfEditor.stateManager.redo()">Redo</button>
+                 </div>
+                 <div>
+                     <button onclick="fit()">fit</button>
+                     <button onclick="download()">download</button>
+
+                     <div class="g-input-block " style="width: 200px;">
+
+
+
+
+                         <label>Zoom</label>
+
+                         <div id="zoom-info"></div>
+
+                         <input type="range" min="0.2" max="3" step="0.1" oninput="_scale(event.target.value)" value="1" list="markers" id="scaleinput">
+
+                         <datalist id="markers">
+                             <option value="0.5" label="50%"></option>
+
+                             <option value="1" label="100%"></option>
+                             <option value="2" label="200%"></option>
+                             <option value="3"></option>
+                         </datalist>
+                     </div>
+                 </div>
+
+
+                 <script>
+                     window.download = e => {
+
+                     }
+                     window.fit = e => {
+                         let space = getComputedStyle(document.querySelector('.ir-toolbar')).getPropertyValue('--toolbar-height');
+
+                         space = parseFloat(space);
+
+                         if (isNaN(space)) {
+                             space = 40;
+                         } else {
+                             space += 40
+                         }
+
+                         var parentWidth = innerWidth - space;
+                         var parentHeight = innerHeight - space;
+
+
+                         const target = document.querySelector('.section-content');
+
+
+
+                         var targetWidth = target.offsetWidth;
+                         var targetHeight = target.offsetHeight;
+
+                         // Calculate the scale factors
+                         var scaleX = parentWidth / targetWidth;
+                         var scaleY = parentHeight / targetHeight;
+
+                         // Use the smaller scale factor to ensure the child fits within the parent
+                         var scaleValue = Math.min(scaleX, scaleY);
+
+
+
+                         document.getElementById('scaleinput').value = scaleValue
+                         // Apply the scale transformation to the child element
+                         _scale(scaleValue);
+                     }
+                     window._scale = value => {
+
+                         const targets = document.querySelectorAll('.section-content');
+                         const scale = Number(value);
+
+                         document.getElementById('zoom-info').innerHTML = Math.round(scale * 100) + '%'
+
+                         targets.forEach(target => {
+
+
+                             const parent = target.parentElement;
+                             if (!parent.dataset.width) {
+                                 parent.dataset.width = parent.offsetWidth;
+                                 parent.dataset.height = parent.offsetHeight;
+                             }
+
+
+
+                             var newWidth = Number(parent.dataset.width) * scale;
+                             var newHeight = Number(parent.dataset.height) * scale;
+
+
+                             target.style.transformOrigin = 'center top';
+                             //target.style.transform = 'scale(' + scale + ')';
+                             target.style.zoom = scale;
+                             parent.style.width = newWidth + 'px';
+                             parent.style.height = newHeight + 'px';
+
+                         });
+
+                         document.querySelectorAll('.component.draggable.active').forEach(node => {
+
+                             if (node.moveable) {
+                                 node.moveable.updateRect();
+
+                             }
+                         })
+
+                     }
+
+                     addEventListener('load', fit);
+                     addEventListener('resize', fit);
+                 </script>
+
+
+
+
+             </div>
+         </div>
+
+
+         <div class="layout-holder">
+             <div class="sections">
+
+                 <div class="section" data-id="page-x">
+                     <div class="section-content">
+                         <div class="component" style="top: 100px;width: 80%;height: 200px;left: 10%">
+                             <script type="settings/json">
+                                 {
+                                    "name": "image",
+                                    "template": "default",
+                                    "radius": "0",
+                                    "file": "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg"
+                                }
+                            </script>
+
+                         </div>
+
+                         <div class="component" style="top: 10px;width: 80%;height: 100px;left: 10%">
+                             <script type="settings/json">
+                                 {
+                                    "name": "gallery",
+                                    "template": "default",
+                                    "files": [
+                                        "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg",
+                                        "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg",
+                                        "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg"
+                                        
+                                    ] 
+                                }
+                            </script>
+
+                         </div>
+
+                         <div class="component text" style="top: 300px;width: 80%;height: 100px;left: 10%">
+                             <script type="settings/json">
+                                 {
+                                    "name": "text",
+                                    "template": "default",
+                                    "content": "Producer, Vocalist, Composer Lyricist: Lana Del Rey"
+                                }
+                            </script>
+
+                         </div>
+
+                     </div>
+                 </div>
+             </div>
+             <div class="ctrlboxes"></div>
+         </div>
+
+
+
+     </div>
+
+     <style>
+         *,
+         *:before,
+         *:after {
+             margin: 0;
+             padding: 0;
+             box-sizing: border-box;
+         }
+
+         body {
+             background-color: #efecec;
+         }
+
+         body.ir-dragging .handle,
+         body.ir-resizing .handle {
+             display: none;
+         }
+
+         .layout-holder {
+             .moveable-control.moveable-origin {
+                 display: none;
+             }
+
+             .moveable-control,
+             .moveable-rotation .moveable-rotation-control {
+                 --size: 12px;
+                 width: var(--size);
+                 height: var(--size);
+                 margin-top: calc(-1 * (var(--size)/2));
+                 margin-left: calc(-1 * (var(--size)/2));
+                 border: 2px solid #6042c4;
+                 background-color: white;
+                 box-shadow: 0px 1px 4px #00000061;
+             }
+
+             .moveable-w,
+             .moveable-e {
+                 border-radius: 5px;
+                 height: 20px;
+                 margin-top: -10px;
+             }
+
+             .moveable-line {
+                 height: 2px;
+                 background-color: #6042c4;
+             }
+         }
+
+
+
+         body.ir-dragging,
+         body.ir-dragging * {
+             cursor: grabbing !important;
+         }
+
+         @page {
+             size: A4;
+             margin: 20mm;
+         }
+
+         .layout-holder {
+             letter-spacing: 0;
+             line-height: 1.5;
+         }
+
+         .component.dragging {
+             box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+
+             transition: box-shadow .2s, scale .2s;
+         }
+
+         .component {
+             position: absolute;
+             overflow: hidden;
+             background-color: white;
+             cursor: grab;
+
+
+         }
+
+         .component-content {
+
+             min-width: 100%;
+             min-height: 100%;
+         }
+
+         [data-type="image"] img,
+         [data-type="image"] picture {
+             width: 100%;
+             height: 100%;
+             display: block;
+             object-fit: cover;
+         }
+
+         .section,
+         .section-content {
+             width: 8.27in;
+             height: 11.69in;
+             position: relative;
+             margin-inline: auto;
+         }
+
+         .section-content {
+             overflow: hidden;
+             box-shadow: 0 0 5px 5px #d3d3d382;
+             background-color: #fff;
+         }
+
+         .section {
+
+
+             margin: 50px auto 0;
+             /*padding: 20mm;*/
+
+
+             transition: transform .5s;
+
+             &:first-child {
+                 margin-top: 20px;
+             }
+         }
+
+         .toolbox {
+             top: 0;
+             left: 0;
+             height: 100%;
+             width: 250px;
+             overflow: auto;
+             scrollbar-width: thin;
+             position: fixed;
+             background-color: white;
+             padding: 12px;
+             box-shadow: 5px 0 5px rgba(0, 0, 0, .02);
+         }
+
+         .g-input-block input {
+             width: 100%;
+             padding: 5px;
+         }
+
+         .g-input-block label {
+             display: block;
+             padding: 0 0 3px;
+         }
+
+         .g-input-block img {
+             max-width: 100%;
+         }
+
+         .g-input-block {
+             padding: 10px 0;
+         }
+
+         @media print {
+             #editor {
+                 display: none;
+             }
+
+             .section {
+                 width: 8.27in;
+                 height: 11.69in;
+
+                 box-shadow: none;
+                 margin: 0;
+
+
+
+             }
+         }
+     </style>
+
+ </body>
+
+ </html>

@@ -1,0 +1,37 @@
+{
+  "name": "pdf-editor",
+  "version": "0.0.1",
+  "description": "GUI PDF editor",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "build": "webpack --mode=development --config webpack.config.js",
+    "prod": "webpack --mode=production --config webpack.config.js",
+    "dev": "webpack serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexanderfcd/pdf-editor.git"
+  },
+  "keywords": [
+    "pdf",
+    "editor",
+    "gui",
+    "document"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexanderfcd/pdf-editor/issues"
+  },
+  "homepage": "https://github.com/alexanderfcd/pdf-editor#readme",
+  "devDependencies": {
+    "webpack": "^5.101.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  },
+  "dependencies": {
+    "moveable": "^0.53.0",
+    "tinymce": "^8.0.1"
+  }
+}
