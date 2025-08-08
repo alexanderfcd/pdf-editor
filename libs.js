@@ -8,4 +8,7 @@ import 'tinymce/plugins/code';     // Example plugin
 
 import Moveable from "moveable"; 
 
+window.Moveable = Moveable;
+window.tinymce = tinymce;
+
  

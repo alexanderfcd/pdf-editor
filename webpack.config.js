@@ -4,6 +4,24 @@ module.exports = {
     libs: './libs.js',
   },
   output: {
-    filename: './dist/[name].js',
+    filename: './[name].js',
   },
+  devServer: {
+    watchFiles: [
+      "js/**/*",
+      "css/**/*"
+    ],
+    historyApiFallback: {
+      index: './index.html'
+    },
+    historyApiFallback: true,
+    hot: true,
+    compress: false, 
+      static: {
+    directory: "./"
+  },
+    
+  },
+
+ 
 };

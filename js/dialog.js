@@ -146,7 +146,7 @@ export class Dialog {
 
                     .dialog-sidebar{
                         top: calc(var(--padding) + var(--toolbar-height));
-                        right: 20px;
+                        right: var(--gap-box);
                         left: auto;
                         transform: none;
                         height: calc(100% - (var(--toolbar-height) + (2 * var(--padding))));
@@ -155,7 +155,7 @@ export class Dialog {
                     .dialog-start{
          
                         right: auto;
-                        left: 20px;
+                        left: var(--gap-box);
        
                     }
 

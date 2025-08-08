@@ -29,11 +29,11 @@
      </script>
 
 
-     <script src="./tinymce/tinymce.min.js"></script>
+     <script type="module" src="./dist/libs.js"></script>
 
 
 
-     <script src="./moveable.min.js"></script>
+    
      <script type="module">
          import {
 
@@ -86,8 +86,7 @@
 
                  const radius = options.radius || 0;
 
-                 target.innerHTML = `<img src="${options.file}" 
-    style="width: 100%;height: 100%;position:absolute;top:0;left:0;object-fit:cover; border-radius: ${radius}">`;
+                 target.innerHTML = `<img src="${options.file}"  tyle="width: 100%;height: 100%;position:absolute;top:0;left:0;object-fit:cover; border-radius: ${radius}">`;
              });
 
 
@@ -140,127 +139,7 @@
  <body>
 
      <div class="container">
-         <div class="ir-toolbar-container">
-             <div class="ir-toolbar">
-
-                 <div>
-                     <button onclick="pdfEditor.stateManager.undo()">Undo</button>
-                     <button onclick="pdfEditor.stateManager.redo()">Redo</button>
-                 </div>
-                 <div>
-                     <button onclick="fit()">fit</button>
-                     <button onclick="download()">download</button>
-
-                     <div class="g-input-block " style="width: 200px;">
-
-
-
-
-                         <label>Zoom</label>
-
-                         <div id="zoom-info"></div>
-
-                         <input type="range" min="0.2" max="3" step="0.1" oninput="_scale(event.target.value)" value="1" list="markers" id="scaleinput">
-
-                         <datalist id="markers">
-                             <option value="0.5" label="50%"></option>
-
-                             <option value="1" label="100%"></option>
-                             <option value="2" label="200%"></option>
-                             <option value="3"></option>
-                         </datalist>
-                     </div>
-                 </div>
-
-
-                 <script>
-                     window.download = e => {
-
-                     }
-                     window.fit = e => {
-                         let space = getComputedStyle(document.querySelector('.ir-toolbar')).getPropertyValue('--toolbar-height');
-
-                         space = parseFloat(space);
-
-                         if (isNaN(space)) {
-                             space = 40;
-                         } else {
-                             space += 40
-                         }
-
-                         var parentWidth = innerWidth - space;
-                         var parentHeight = innerHeight - space;
-
-
-                         const target = document.querySelector('.section-content');
-
-
-
-                         var targetWidth = target.offsetWidth;
-                         var targetHeight = target.offsetHeight;
-
-                         // Calculate the scale factors
-                         var scaleX = parentWidth / targetWidth;
-                         var scaleY = parentHeight / targetHeight;
-
-                         // Use the smaller scale factor to ensure the child fits within the parent
-                         var scaleValue = Math.min(scaleX, scaleY);
-
-
-
-                         document.getElementById('scaleinput').value = scaleValue
-                         // Apply the scale transformation to the child element
-                         _scale(scaleValue);
-                     }
-                     window._scale = value => {
-
-                         const targets = document.querySelectorAll('.section-content');
-                         const scale = Number(value);
-
-                         document.getElementById('zoom-info').innerHTML = Math.round(scale * 100) + '%'
-
-                         targets.forEach(target => {
-
-
-                             const parent = target.parentElement;
-                             if (!parent.dataset.width) {
-                                 parent.dataset.width = parent.offsetWidth;
-                                 parent.dataset.height = parent.offsetHeight;
-                             }
-
-
-
-                             var newWidth = Number(parent.dataset.width) * scale;
-                             var newHeight = Number(parent.dataset.height) * scale;
-
-
-                             target.style.transformOrigin = 'center top';
-                             //target.style.transform = 'scale(' + scale + ')';
-                             target.style.zoom = scale;
-                             parent.style.width = newWidth + 'px';
-                             parent.style.height = newHeight + 'px';
-
-                         });
-
-                         document.querySelectorAll('.component.draggable.active').forEach(node => {
-
-                             if (node.moveable) {
-                                 node.moveable.updateRect();
-
-                             }
-                         })
-
-                     }
-
-                     addEventListener('load', fit);
-                     addEventListener('resize', fit);
-                 </script>
-
-
-
-
-             </div>
-         </div>
+         
 
 
          <div class="layout-holder">

@@ -1,9 +1,14 @@
 @import url(./range.css);
+@import url(./buttons.css);
 
 :root {
   --toolbar-height: 70px;
   --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --gap: 12px;
+  --gap-box: calc(var(--gap) * 1.5);
+  --radius: 6px;
+  --font-size: 14px;
 }
 
 .cp_dialog.cp_open {
@@ -21,7 +26,7 @@
   transform: scale(0.9);
   transform-origin: left bottom;
 
-  border-radius: 6px;
+  border-radius: var(--radius);
   cursor: pointer;
   background-color: #fff;
   border: 2px solid #eee;
@@ -34,7 +39,7 @@
 }
 
 .handle li {
-  padding: 5px 10px;
+  padding: calc(var(--gap) / 2) var(--gap);
   position: relative;
   -webkit-user-select: none;
   user-select: none;
@@ -42,7 +47,7 @@
 .handle li li {
   justify-content: start;
   white-space: nowrap;
-  padding: 10px 15px;
+  padding: var(--gap);
 }
 .handle ul ul {
   position: absolute;
@@ -51,7 +56,7 @@
   right: 0;
   background-color: #fff;
   border: 2px solid #eee;
-  padding: 10px;
+  padding: var(--gap);
 }
 .handle li.active > ul {
   display: block;
@@ -62,7 +67,7 @@
 .handle > ul > li {
 }
 .handle li span ~ span {
-  margin-inline-start: 5px;
+  margin-inline-start: calc(var(--gap) / 2);
 }
 .handle li svg {
   width: 25px;
@@ -80,7 +85,7 @@
   position: relative;
   white-space: nowrap;
   text-transform: uppercase;
-  font-size: 14px;
+  font-size: var(--font-size);
   font-weight: 500;
 
   &:after {
@@ -273,9 +278,10 @@
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   height: var(--toolbar-height);
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   z-index: 3003;
   font-family: var(--font);
+  padding-inline: var(--gap-box);
 }
 
 .tox.tox-tinymce-inline {

@@ -22,6 +22,14 @@
             return tag;
         }
 
+        if(typeof tag === "string" && tag.trim().indexOf("<") === 0) {
+            const frag = $({innerHTML: tag});
+            if(frag.firstElementChild === frag.lastElementChild) {
+                return frag.firstElementChild
+            } 
+            return
+        }
+
         if (typeof tag === 'object') {
             props = tag;
             tag = props.tag || 'div';
@@ -72,7 +80,17 @@
         return node;
     }
  
+ export const $$ = function (tag, props) {
+    const res = {
+        node: $(tag, props)
+    }
+    res.node.querySelectorAll('[data-ref]').forEach(node => {
+        res[node.dataset.ref] = node;
+        delete node.dataset.ref;
+    })
 
+    return res
+ }
 
 const useAwait = p => p.then(data => [ data, null ]).catch(err => [ null, err ]);
 

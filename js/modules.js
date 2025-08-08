@@ -1,6 +1,6 @@
  
 
-import { icon } from "../colorpicker/icons.js";
+import { icon } from "./icons.js";
 import { $, CreateBase} from "./core.js"
 import { getModuleConfig, getOwnerId, saveModuleStyle } from "./module/module-config.js";
 import { CreateModule, getModule, renderModule } from "./module/module.js";

@@ -9,9 +9,12 @@ import { StateManager } from "./module/state-manager.js";
 import { CreateModule } from "./module/module.js";
 import { CDialog } from "./dialog.js";
 import { CreateBase } from "./core.js";
+import { ScaleService } from "./scale.js";
+import { Toolbar } from "./toolbar.js";
 
 
 
+ 
 export class Editor extends CreateBase{
     constructor(options) {
         super();
@@ -225,6 +228,12 @@ export class Editor extends CreateBase{
     }
 
     mount() {
+this.scale = new ScaleService(this)
+        this.toolbar =   Toolbar(this);
+        console.log( this.toolbar)
+
+        document.body.append(this.toolbar.node)
+        
         ModulesInit(this)
         new LayoutManagerComponent(this.settings.sections)
         this.GUIEditor()
