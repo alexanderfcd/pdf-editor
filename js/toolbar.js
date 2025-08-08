@@ -68,24 +68,22 @@ export const Toolbar = (instance) => {
         instance.toolbar.scaleInfo.textContent = `${data.percent}%`
     });
 
-    instance.stateManager.state.on('change', data => {
 
-       
-        
-         instance.toolbar.undo.disabled = data.hasPrev
-         instance.toolbar.redo.disabled = data.hasNext
-    })
+    const buttonsState = () => {
+        instance.toolbar.undo.disabled = !instance.stateManager.state.hasNext
+        instance.toolbar.redo.disabled = !instance.stateManager.state.hasPrev
+    }   
 
-    instance.toolbar.undo.disabled = !instance.stateManager.state.hasPrev
-    instance.toolbar.redo.disabled = !instance.stateManager.state.hasNext
+
+
+    instance.stateManager.state.on('change', buttonsState);
+
+ 
     
 
-    instance.stateManager.state.on('record', data => {
-        console.log(data)
-        
-         instance.toolbar.undo.disabled = data[0].hasPrev
-         instance.toolbar.redo.disabled = data[0].hasNext
-    })
+    instance.stateManager.state.on('record', buttonsState)
+
+    buttonsState()
     
     return instance.toolbar;
     
