@@ -12,7 +12,7 @@ import { CreateModule, getModule, renderModule } from "./module/module.js";
 
 
 const textModule = new CreateModule({
-    name: 'text',
+    name: 'xtext',
     schema:   [ 
  
 
@@ -44,7 +44,7 @@ const textModule = new CreateModule({
     },
     onSelect: ({target, event}) => {
 
- console.log(target, event)
+ 
 
       if(!event.target.closest('.component-content')) {
         target.classList.remove("editing");
@@ -74,17 +74,17 @@ const textModule = new CreateModule({
      
             setTimeout(async () => {
                 const editor = (await target.editor)[0];
-           
-                    editor.focus();
-                    //editor.execCommand('SelectAll');
-                }, 1 )
+        
+                editor.focus();
+                //editor.execCommand('SelectAll');
+            }, 1 )
         }
         target.classList.add("editing");
 
         if(target.moveable) {
-target.moveable.destroy()
-                    target.classList.remove('draggable')
-                    delete target.moveable
+            target.moveable.destroy()
+            target.classList.remove('draggable')
+            delete target.moveable
         }
 
                 
@@ -93,20 +93,11 @@ target.moveable.destroy()
      
 });
 
-textModule.addTemplate("default", (target, options) => {
 
-    
-
-    const radius = options.radius || 0;
-
-    
- 
-    target.innerHTML = `<div style="border-radius: ${radius}px">${options.content}</div>`;
-});
 
 
 const gallery = new CreateModule({
-    name: 'gallery',
+    name: 'gxallery',
     schema:   [ 
  
  
@@ -407,34 +398,43 @@ export const createModule = (options, css, id) => {
  
 
 const TargetMethods = {
-    clone: target => {
+    clone: (target, output) => {
         const css = target.getAttribute('style');
         const conf = getModuleConfig(target);
 
         const newModule = createModule(conf, css);
 
-        target.after(newModule);
 
-        const compStyle = getComputedStyle(newModule);
+        if(typeof output === 'undefined') {
+            target.after(newModule);
 
-        let cTop = compStyle.top;
-        let cLeft = compStyle.left;
+            const compStyle = getComputedStyle(newModule);
 
- 
+            let cTop = compStyle.top;
+            let cLeft = compStyle.left;
 
-        cTop = parseFloat(cTop);
-        cLeft = parseFloat(cLeft);
+    
 
-        if(!isNaN(cTop)) {
-            newModule.style.top = (cTop + 20) + 'px';
+            cTop = parseFloat(cTop);
+            cLeft = parseFloat(cLeft);
+
+            if(!isNaN(cTop)) {
+                newModule.style.top = (cTop + 20) + 'px';
+            }
+            if(!isNaN(cLeft)) {
+                newModule.style.left = (cLeft + 20) + 'px';
+            }            
+        } else if(output && output.nodeType === 1){
+            output.append(newModule);
         }
-        if(!isNaN(cLeft)) {
-            newModule.style.left = (cLeft + 20) + 'px';
-        }
+
+
         return newModule;
 
     }
 }
+
+window.TargetMethods = TargetMethods;
 
 export const ModulesInit = (instance) => {
    

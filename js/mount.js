@@ -152,7 +152,7 @@ export class Editor extends CreateBase{
                 c.classList.remove("active")
             }
         });
-    console.log(node)
+    
 
         
         initDraggable(this);
@@ -228,9 +228,8 @@ export class Editor extends CreateBase{
     }
 
     mount() {
-this.scale = new ScaleService(this)
-        this.toolbar =   Toolbar(this);
-        console.log( this.toolbar)
+        this.scale = new ScaleService(this)
+        this.toolbar = Toolbar(this);
 
         document.body.append(this.toolbar.node)
         

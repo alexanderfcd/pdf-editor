@@ -119,7 +119,7 @@ export class Dialog {
                         transform: scale(.9);
                         z-index: 3001;
 
-                        --padding: 20px;
+                        --padding: var(--gap-box);
                         --header-height: 70px;
                         --footer-height: 70px;
                         font-family: var(--font);

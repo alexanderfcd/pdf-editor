@@ -50,7 +50,9 @@ export class ScaleService extends CreateBase {
                 node.moveable.updateRect();
 
             }
-        })
+        });
+
+        $ir.componentHandle.position();
 
         this.dispatch('change', {value: scale, percent})
 

@@ -5,6 +5,11 @@ import tinymce from 'tinymce';
 import 'tinymce/icons/default';    // Icon set
 import 'tinymce/themes/silver';    // Theme (e.g., 'silver')
 import 'tinymce/plugins/code';     // Example plugin
+import 'tinymce/models/dom/model';     
+ import 'tinymce/plugins/licensekeymanager';
+ import 'tinymce/plugins/image/plugin.js';
+
+  
 
 import Moveable from "moveable"; 
 

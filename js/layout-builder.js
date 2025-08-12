@@ -1,3 +1,5 @@
+import { renderModule } from "./module/module.js";
+
 class LayoutBuilderService {
 
     _events = {};
@@ -100,12 +102,33 @@ class LayoutBuilderService {
 
         target.addEventListener('transitionend', handleEnd);
     }
+ 
+
     clone(target) {
-        const clone = target.cloneNode(true);
+        const clone = document.createElement('div');
+        clone.innerHTML =  `<div class="section-content"></div><div class="layout-menu"></div>`;
+        const comtentBlock = clone.querySelector('.section-content');
+        clone.className =  `section`;
+        clone.setAttribute('style', target.getAttribute('style'));
+        comtentBlock.setAttribute('style', target.querySelector('.section-content').getAttribute('style'));
+        clone.dataset.id = $ir.prefix( Date.now());
         target.after(clone);
+
+        target.querySelectorAll(".component").forEach(e => {
+            const neNode = TargetMethods.clone(e, false);
+            comtentBlock.append(neNode);
+            renderModule(neNode);
+        })
+
+
+        this.nav(clone);
         this.dispatch('change')
-        this.dispatch('clone', clone)
+        this.dispatch('clone', clone);
+        clone.scrollIntoView({
+            behavior: "smooth",
+        });
     }
+
     buttonsVisibility(root) {
         const all = root.querySelectorAll('.layout-menu');
         all.forEach((node,i) => {
@@ -114,23 +137,9 @@ class LayoutBuilderService {
             node.querySelector('[data-action="moveDown"]').style.display = i === (all.length - 1) ? 'none' : '';
         })
     }
-}
+    nav( layout) {
 
-export class LayoutManagerComponent {
-    constructor(target) {
-        this.layoutService = new LayoutBuilderService();
-        this.target = target;
-        this.mount();
-        this.layoutService.buttonsVisibility(this.target)
-        this.layoutService.on('change', () => {
-            setTimeout(  () => {
-                this.layoutService.buttonsVisibility(this.target)
-            })
-        })
-    }
-
-      nav( layout) {
-        const template = `
+          const template = `
         <ul class="menu bg-base-200 rounded-box">
             <li>
                 <a class="tooltip tooltip-left" data-tip="Move Up" data-action="moveUp">
@@ -164,12 +173,31 @@ export class LayoutManagerComponent {
         nav.innerHTML = template;
         nav.querySelectorAll('[data-action]').forEach(node => {
             node.addEventListener('click', () => {
-                this.layoutService[node.dataset.action](layout);
-                this.mount()
+                this[node.dataset.action](layout);
+                 
             })
         });
-        layout.appendChild(nav)
+        layout.appendChild(nav);
+        layout.__mounted = true;
         return nav;
+    }
+}
+
+export class LayoutManagerComponent {
+    constructor(target) {
+        this.layoutService = new LayoutBuilderService();
+        this.target = target;
+        this.mount();
+        this.layoutService.buttonsVisibility(this.target)
+        this.layoutService.on('change', () => {
+            setTimeout(  () => {
+                this.layoutService.buttonsVisibility(this.target)
+            })
+        })
+    }
+
+      nav( layout) {
+        return this.layoutService.nav(layout)
       }
  
      mount() {
