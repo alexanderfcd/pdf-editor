@@ -1,145 +1,139 @@
 import { renderModule } from "./module/module.js";
 
 class LayoutBuilderService {
-
-    _events = {};
-    on (e, f) { 
-        this._events[e] ? this._events[e].push(f) : (this._events[e] = [f]) 
-    };
-    dispatch (e, f) { 
-        this._events[e] ? this._events[e].forEach(function (c){ 
-            c.call(this, f); 
-        }) : ''; 
-    };
-
-    delete(target) {
-        if(confirm('Are you sure you want to delete selected element?')) {
-            target.style.opacity = 0;
-            const handleEnd = () => {
-                target.remove();
-                this.dispatch('change')
-            }
-    
-            target.addEventListener('transitionend', handleEnd);
-        }
-    }
-    moveUp(target) {
-
-        let prev = target.previousElementSibling;
-        if (!prev) return;
-        let offTarget = target.getBoundingClientRect();
-        let offPrev = prev.getBoundingClientRect();
-        let to = 0;
-
-        if (offTarget.top > offPrev.top) {
-            to = -(offTarget.top - offPrev.top)
-        }
-
-        target.style.transform = 'translateY(' + to + 'px)';
-        prev.style.transform = 'translateY(' + (-to) + 'px)';
-
-        const handleEnd = () => {
-            //prev.scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
-            prev.parentNode.insertBefore(target, prev);
-
-
-            prev.style.transition = 'none';
-            target.style.transition = 'none';
-
-            setTimeout(() => {
-                target.style.transition = "";
-                prev.style.transition = "";
-            })
-
-            target.style.transform = '';
-            prev.style.transform = '';
-
-    
-             
-            target.removeEventListener('transitionend', handleEnd);
-            this.dispatch('change');
-            this.dispatch('moveUp', target);
- 
-        }
-
-        target.addEventListener('transitionend', handleEnd);
-
-    }
-
-    moveDown(target) {
-        let next = target.nextElementSibling;
-        if (!next) return;
-        let offTarget = target.getBoundingClientRect();
-        let offnext = next.getBoundingClientRect();
-        let to = 0;
-
-        if (offTarget.top < offnext.top) {
-            to = -(offTarget.top - offnext.top)
-        }
-        target.style.transform = 'translateY(' + to + 'px)';
-        next.style.transform = 'translateY(' + (-to) + 'px)';
-        const handleEnd = () => {
-            //next.scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
-            next.parentNode.insertBefore(next, target);
-
-            next.style.transition = 'none';
-            target.style.transition = 'none';
-
-            setTimeout(() => {
-                target.style.transition = "";
-                next.style.transition = "";
-            })
-           
-            target.style.transform = '';
-            next.style.transform = '';
-            
-            target.removeEventListener('transitionend', handleEnd);
-            this.dispatch('change');
-            this.dispatch('moveDown', target);
-
-            
-        }
-
-        target.addEventListener('transitionend', handleEnd);
-    }
- 
-
-    clone(target) {
-        const clone = document.createElement('div');
-        clone.innerHTML =  `<div class="section-content"></div><div class="layout-menu"></div>`;
-        const comtentBlock = clone.querySelector('.section-content');
-        clone.className =  `section`;
-        clone.setAttribute('style', target.getAttribute('style'));
-        comtentBlock.setAttribute('style', target.querySelector('.section-content').getAttribute('style'));
-        clone.dataset.id = $ir.prefix( Date.now());
-        target.after(clone);
-
-        target.querySelectorAll(".component").forEach(e => {
-            const neNode = TargetMethods.clone(e, false);
-            comtentBlock.append(neNode);
-            renderModule(neNode);
+  _events = {};
+  on(e, f) {
+    this._events[e] ? this._events[e].push(f) : (this._events[e] = [f]);
+  }
+  dispatch(e, f) {
+    this._events[e]
+      ? this._events[e].forEach(function (c) {
+          c.call(this, f);
         })
+      : "";
+  }
 
+  delete(target) {
+    if (confirm("Are you sure you want to delete selected element?")) {
+      target.style.opacity = 0;
+      const handleEnd = () => {
+        target.remove();
+        this.dispatch("change");
+      };
 
-        this.nav(clone);
-        this.dispatch('change')
-        this.dispatch('clone', clone);
-        clone.scrollIntoView({
-            behavior: "smooth",
-        });
+      target.addEventListener("transitionend", handleEnd);
+    }
+  }
+  moveUp(target) {
+    let prev = target.previousElementSibling;
+    if (!prev) return;
+    let offTarget = target.getBoundingClientRect();
+    let offPrev = prev.getBoundingClientRect();
+    let to = 0;
+
+    if (offTarget.top > offPrev.top) {
+      to = -(offTarget.top - offPrev.top);
     }
 
-    buttonsVisibility(root) {
-        const all = root.querySelectorAll('.layout-menu');
-        all.forEach((node,i) => {
-            
-            node.querySelector('[data-action="moveUp"]').style.display = i === 0 ? 'none' : '';
-            node.querySelector('[data-action="moveDown"]').style.display = i === (all.length - 1) ? 'none' : '';
-        })
-    }
-    nav( layout) {
+    target.style.transform = "translateY(" + to + "px)";
+    prev.style.transform = "translateY(" + -to + "px)";
 
-          const template = `
+    const handleEnd = () => {
+      //prev.scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
+      prev.parentNode.insertBefore(target, prev);
+
+      prev.style.transition = "none";
+      target.style.transition = "none";
+
+      setTimeout(() => {
+        target.style.transition = "";
+        prev.style.transition = "";
+      });
+
+      target.style.transform = "";
+      prev.style.transform = "";
+
+      target.removeEventListener("transitionend", handleEnd);
+      this.dispatch("change");
+      this.dispatch("moveUp", target);
+    };
+
+    target.addEventListener("transitionend", handleEnd);
+  }
+
+  moveDown(target) {
+    let next = target.nextElementSibling;
+    if (!next) return;
+    let offTarget = target.getBoundingClientRect();
+    let offnext = next.getBoundingClientRect();
+    let to = 0;
+
+    if (offTarget.top < offnext.top) {
+      to = -(offTarget.top - offnext.top);
+    }
+    target.style.transform = "translateY(" + to + "px)";
+    next.style.transform = "translateY(" + -to + "px)";
+    const handleEnd = () => {
+      //next.scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
+      next.parentNode.insertBefore(next, target);
+
+      next.style.transition = "none";
+      target.style.transition = "none";
+
+      setTimeout(() => {
+        target.style.transition = "";
+        next.style.transition = "";
+      });
+
+      target.style.transform = "";
+      next.style.transform = "";
+
+      target.removeEventListener("transitionend", handleEnd);
+      this.dispatch("change");
+      this.dispatch("moveDown", target);
+    };
+
+    target.addEventListener("transitionend", handleEnd);
+  }
+
+  clone(target) {
+    const clone = document.createElement("div");
+    clone.innerHTML = `<div class="section-content"></div><div class="layout-menu"></div>`;
+    const comtentBlock = clone.querySelector(".section-content");
+    clone.className = `section`;
+    clone.setAttribute("style", target.getAttribute("style"));
+    comtentBlock.setAttribute(
+      "style",
+      target.querySelector(".section-content").getAttribute("style")
+    );
+    clone.dataset.id = $ir.prefix(Date.now());
+    target.after(clone);
+
+    target.querySelectorAll(".component").forEach((e) => {
+      const neNode = TargetMethods.clone(e, false);
+      comtentBlock.append(neNode);
+      renderModule(neNode);
+    });
+
+    this.nav(clone);
+    this.dispatch("change");
+    this.dispatch("clone", clone);
+    clone.scrollIntoView({
+      behavior: "smooth",
+    });
+  }
+
+  buttonsVisibility(root) {
+    const all = root.querySelectorAll(".layout-menu");
+    all.forEach((node, i) => {
+      node.querySelector('[data-action="moveUp"]').style.display =
+        i === 0 ? "none" : "";
+      node.querySelector('[data-action="moveDown"]').style.display =
+        i === all.length - 1 ? "none" : "";
+    });
+  }
+  nav(layout) {
+    const template = `
         <ul class="menu bg-base-200 rounded-box">
             <li>
                 <a class="tooltip tooltip-left" data-tip="Move Up" data-action="moveUp">
@@ -166,49 +160,44 @@ class LayoutBuilderService {
         </ul>
         `;
 
-          
-
-        const nav = layout.querySelector('.layout-menu') || document.createElement('div');
-        nav.className = 'layout-menu';
-        nav.innerHTML = template;
-        nav.querySelectorAll('[data-action]').forEach(node => {
-            node.addEventListener('click', () => {
-                this[node.dataset.action](layout);
-                 
-            })
-        });
-        layout.appendChild(nav);
-        layout.__mounted = true;
-        return nav;
-    }
+    const nav =
+      layout.querySelector(".layout-menu") || document.createElement("div");
+    nav.className = "layout-menu";
+    nav.innerHTML = template;
+    nav.querySelectorAll("[data-action]").forEach((node) => {
+      node.addEventListener("click", () => {
+        this[node.dataset.action](layout);
+      });
+    });
+    layout.appendChild(nav);
+    layout.__mounted = true;
+    return nav;
+  }
 }
 
 export class LayoutManagerComponent {
-    constructor(target) {
-        this.layoutService = new LayoutBuilderService();
-        this.target = target;
-        this.mount();
-        this.layoutService.buttonsVisibility(this.target)
-        this.layoutService.on('change', () => {
-            setTimeout(  () => {
-                this.layoutService.buttonsVisibility(this.target)
-            })
-        })
-    }
+  constructor(target) {
+    this.layoutService = new LayoutBuilderService();
+    this.target = target;
+    this.mount();
+    this.layoutService.buttonsVisibility(this.target);
+    this.layoutService.on("change", () => {
+      setTimeout(() => {
+        this.layoutService.buttonsVisibility(this.target);
+      });
+    });
+  }
 
-      nav( layout) {
-        return this.layoutService.nav(layout)
+  nav(layout) {
+    return this.layoutService.nav(layout);
+  }
+
+  mount() {
+    this.target.querySelectorAll(".section").forEach((node) => {
+      if (!node.__mounted) {
+        node.__mounted = true;
+        this.nav(node);
       }
- 
-     mount() {
-        this.target.querySelectorAll('.section').forEach(node => {
-        
-            if(!node.__mounted) {
-                node.__mounted = true;
-                this.nav(node);
-   
-            }
-            
-        })
-     }
+    });
+  }
 }

@@ -11,128 +11,7 @@
      <link rel="stylesheet" href="colorpicker/colorpicker.css">
 
 
-     <script>
-         ;
-         (function() {
-             const prefix = 'ir-';
-             window.$ir = {
-                 prefix(str) {
-                     return `${prefix}${str}`;
-                 },
-                 isSystem: e => {
-                     const target = e.target ? e.target : e;
-                     return !!target.closest('.toolbox,.dialog,#gtx-trans,.tox,.handle,.ir-toolbar');
-                 }
-             }
-
-         })();
-     </script>
-
-
-     <script type="module" src="./dist/libs.js"></script>
-
-
-
-    
-     <script type="module">
-         import {
-
-
-             Editor,
-
-         } from "./js/mount.js";
-
-         addEventListener('DOMContentLoaded', () => {
-             window.pdfEditor = new Editor({
-                 editor: document.querySelector('#editor'),
-                 sections: document.querySelector('.sections'),
-             });
-
-             // const imgModule = new CreateModule({
-             const imgModule = pdfEditor.createModule({
-                 name: 'image',
-                 schema: [
-
-                     {
-                         label: 'Image',
-                         props: {
-                             accept: 'image/*',
-                             type: 'file',
-                             multiple: false
-
-                         },
-                         name: 'file',
-                     },
-                     {
-                         label: 'Radius',
-                         props: {
-
-                             type: 'number',
-                             min: 0,
-                             max: 200,
-                             appendix: 'px',
-                         },
-
-                         name: 'radius',
-                     },
-                 ],
-                 defaults: {
-                     file: 'https://images.pexels.com/photos/4762770/pexels-photo-4762770.jpeg',
-                     radius: 10
-                 }
-             });
-
-             imgModule.addTemplate("default", (target, options) => {
-
-                 const radius = options.radius || 0;
-
-                 target.innerHTML = `<img src="${options.file}"  tyle="width: 100%;height: 100%;position:absolute;top:0;left:0;object-fit:cover; border-radius: ${radius}">`;
-             });
-
-
-
-
-             imgModule.addTemplate("star", (target, options) => {
-                 const clip = `url('data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3CclipPath id="clipPath" clipPathUnits="objectBoundingBox"%3E%3Cpolygon points=".5,0 .8,1 0,.4 1,.4 .2,1" /%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E#clipPath')`;
-
-                 target.innerHTML = `<img src="${options.file}" style="width: 100%;height: 100%;position:absolute;top:0;left:0;object-fit:cover; mask-size: contain;">`;
-                 target.querySelector('img').style.clipPath = clip;
-
-
-
-             })
-             imgModule.addTemplate("heart", (target, options) => {
-
-                 const id = `id${Date.now()}`
-
-                 const mask = `
- 
-
-<svg height="0" width="0">
-  
- 
-  <mask id="${id}">
-    <path
-      d="M20,70 A40,40,0,0,1,100,70 A40,40,0,0,1,180,70 Q180,130,100,190 Q20,130,20,70 Z"
-      fill="green"
-      stroke="white"
-      stroke-width="20" />
-  </mask>
- 
-</svg>
-
- 
-
-    
-    
-    `;
-
-                 target.innerHTML = `${mask}<img src="${options.file}" 
-    style="width: 100%;height: 100%;position:absolute;top:0;left:0;object-fit:cover;   mask-image: url(#${id});mask-size: contain;">`;
-             });
-
-         })
-     </script>
+     
 
  </head>
 
@@ -256,6 +135,10 @@
              margin: 20mm;
          }
 
+         .sections{
+            padding-top: calc(var(--toolbar-height) + var(--gap-box));
+         }
+
          .layout-holder {
              letter-spacing: 0;
              line-height: 1.5;
@@ -314,7 +197,7 @@
              transition: transform .5s;
 
              &:first-child {
-                 margin-top: 20px;
+                 margin-top: var(--padding);
              }
          }
 
@@ -366,6 +249,91 @@
              }
          }
      </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     <script>
+         ;
+         (function() {
+             const prefix = 'ir-';
+             window.$ir = {
+                 prefix(str) {
+                     return `${prefix}${str}`;
+                 },
+                 isSystem: e => {
+                     const target = e.target ? e.target : e;
+                     return !!target.closest('.toolbox,.dialog,#gtx-trans,.tox,.handle,.ir-toolbar');
+                 }
+             }
+
+         })();
+     </script>
+
+
+     <script   src="./dist/libs.js"></script>
+     <script   src="./dist/main.js"></script>
+     <script   src="./dist/modules.js"></script>
+
+<script type="module">
+ 
+
+      window.mceAdapter = (target) => {
+        return tinymce.init({
+            license_key: 'gpl',
+                target,
+                license: false,
+                menubar: false,
+                inline: true,
+                icons: 'default',
+                plugins: 'image lists code table codesample',
+                toolbar: 'blocks | forecolor backcolor | bold italic underline strikethrough | link blockquote codesample | align bullist numlist ',
+                height: 400,
+                content_style: 'body { margin: 0%; }',
+                setup: (editor) => {
+                    editor.on('init', (e) => {
+                        setTimeout(() => {
+                            editor.focus();
+                            //editor.execCommand('SelectAll');
+                        }, 1)
+                    });
+                }
+            })
+      }
+      window.tipTapAdapter = (element) => {
+ 
+      }
+
+      window.richText = mceAdapter
+      
+    </script>
+
+    
+     <script type="module">
+ 
+
+         addEventListener('DOMContentLoaded', () => {
+             window.pdfEditor = new Editor({
+                 editor: document.querySelector('#editor'),
+                 sections: document.querySelector('.sections'),
+             });
+
+   
+
+ });
+
+
+     </script>
 
  </body>
 

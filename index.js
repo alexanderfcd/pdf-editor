@@ -1,2 +1,1 @@
- 
- import Editor from "./js/mount.js";
+import Editor from "./js/mount.js";

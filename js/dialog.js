@@ -1,96 +1,94 @@
 import { CreateBase } from "./core.js";
 
 export class Dialog {
-            constructor(options) {
-                this.config(options);
-                this.mode = options.mode || 'modal'
-                this.init();
-            }
+  constructor(options) {
+    this.config(options);
+    this.mode = options.mode || "modal";
+    this.init();
+  }
 
-            title(title) {
-                 this.header.querySelector('.dialog-title').innerHTML = title;
-            }
+  title(title) {
+    this.header.querySelector(".dialog-title").innerHTML = title;
+  }
 
-            create() {
-                this.root = document.createElement('div');
-                const mode = this.mode.split('-');
-                let pos = 'end';
-                if(mode[1]) {
-                    pos = mode[1];
-                }
-                this.root.className = `dialog dialog-${mode[0]} dialog-${pos}`;
+  create() {
+    this.root = document.createElement("div");
+    const mode = this.mode.split("-");
+    let pos = "end";
+    if (mode[1]) {
+      pos = mode[1];
+    }
+    this.root.className = `dialog dialog-${mode[0]} dialog-${pos}`;
 
-                this.header = document.createElement('div');
-                this.header.className = 'dialog-header';
-                this.header.innerHTML = `<span class="dialog-title">${this.settings.title || ''}</span>`;
+    this.header = document.createElement("div");
+    this.header.className = "dialog-header";
+    this.header.innerHTML = `<span class="dialog-title">${
+      this.settings.title || ""
+    }</span>`;
 
-                const closeButton = document.createElement('span');
-                closeButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
-                closeButton.className = 'dialog-close';
-                closeButton.addEventListener('click', e => {
-                    e.preventDefault();
-                    this[this.settings.closeAction]();
-                })
+    const closeButton = document.createElement("span");
+    closeButton.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
+    closeButton.className = "dialog-close";
+    closeButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      this[this.settings.closeAction]();
+    });
 
-                this.header.appendChild(closeButton);
+    this.header.appendChild(closeButton);
 
-                this.content = document.createElement('div');
-                this.content.className = 'dialog-content';
-                this.content.innerHTML = this.settings.content;
-                this.content.style.width = this.settings.width;
+    this.content = document.createElement("div");
+    this.content.className = "dialog-content";
+    this.content.innerHTML = this.settings.content;
+    this.content.style.width = this.settings.width;
 
+    this.footer = document.createElement("div");
+    this.footer.className = "dialog-footer";
 
-                this.footer = document.createElement('div');
-                this.footer.className = 'dialog-footer';
-                 
-                
+    this.overlay = document.createElement("div");
+    this.overlay.className = "dialog-overlay";
 
-                this.overlay = document.createElement('div');
-                this.overlay.className = 'dialog-overlay';
+    if (!!this.settings.header) {
+      this.root.appendChild(this.header);
+      this.root.classList.add("has-header");
+    }
 
-                if(!!this.settings.header ) {
-                    this.root.appendChild(this.header);
-                    this.root.classList.add('has-header');
-                }
+    this.root.appendChild(this.content);
 
-                this.root.appendChild(this.content);
-                
-                if(!!this.settings.footer ) {
-                    this.root.appendChild(this.footer);
-                    this.root.classList.add('has-footer');
-                }
+    if (!!this.settings.footer) {
+      this.root.appendChild(this.footer);
+      this.root.classList.add("has-footer");
+    }
 
-                if(this.settings.overlay !== false ) {
-                    document.body.appendChild(this.overlay);
-                }
+    if (this.settings.overlay !== false) {
+      document.body.appendChild(this.overlay);
+    }
 
-                
-                document.body.appendChild(this.root);
+    document.body.appendChild(this.root);
+  }
 
-            }
+  remove() {
+    this.root.remove();
+    this.overlay.remove();
+  }
 
-            remove() {
-                this.root.remove();
-                this.overlay.remove();
-            }
+  show() {
+    this.root.classList.add("active");
+    this.overlay.style.display = "";
+  }
+  hide() {
+    this.root.classList.remove("active");
+    this.overlay.style.display = "none";
+  }
 
-            show() {
-                this.root.classList.add('active');
-                this.overlay.style.display = "";
-            }
-            hide() {
-                this.root.classList.remove('active');
-                this.overlay.style.display = "none";
-            }
+  style() {
+    if (Dialog._hasStyle) {
+      return;
+    }
+    Dialog._hasStyle = true;
+    const style = document.createElement("style");
 
-            style() {
-                if(Dialog._hasStyle) {
-                    return;
-                }
-                Dialog._hasStyle = true;
-                const style = document.createElement('style');
-
-                style.textContent = `
+    style.textContent = `
                     .dialog, .dialog-overlay{
                         position: fixed;
                         z-index: 1000;
@@ -224,82 +222,81 @@ export class Dialog {
 
                 `;
 
-                document.head.appendChild(style);
-            }
+    document.head.appendChild(style);
+  }
 
-            init() {
-                this.create();
-                this.style();
-                this.show();
-            }
+  init() {
+    this.create();
+    this.style();
+    this.show();
+  }
 
-            config(options = {}) {
-                const defaults = {
-                    content: ``,
-                    title: '',
-                    width: 'auto',
-                    closeAction: 'remove'
-                };
+  config(options = {}) {
+    const defaults = {
+      content: ``,
+      title: "",
+      width: "auto",
+      closeAction: "remove",
+    };
 
-                this.settings = Object.assign({}, defaults, options);
-            }
-        }
+    this.settings = Object.assign({}, defaults, options);
+  }
+}
 
+export class CDialog extends CreateBase {
+  constructor(options = {}) {
+    super();
+    this.dialog = new Dialog(
+      Object.assign(
+        {},
+        {
+          width: "350px",
+          mode: "sidebar",
+          footer: false,
+          header: true,
+          content: ``,
+          closeAction: "hide",
+          overlay: false,
+        },
+        options
+      )
+    );
+    this.node = this.dialog.content;
+    this.dialog.hide();
+  }
 
-         export class CDialog extends CreateBase {
-            constructor(options = {}) {
-                super();
-                this.dialog = new Dialog(Object.assign({}, {
-                    width: '350px',
-                    mode: 'sidebar',
-                    footer: false,
-                    header: true,
-                    content: ``,
-                    closeAction: 'hide',
-                    overlay: false
-                }, options));
-                this.node = this.dialog.content
-                this.dialog.hide()
-            }
-        
-            enable() {
-                this.dialog.root.classList.remove("disabled");
-            }
-            disable() {
-                this.dialog.root.classList.add("disabled");
-            }
-         
-            open() {
-                this.dialog.show();
-                this.dispatch('show');
-            }
-        
-            close() {
-                this.dialog.hide();
-                this.dispatch('close');
-            }
-        
-            content(content) {
-                return this.html(content);
-            }
-            html(content) {
-        
-               
-                if(typeof content === 'string') {
-                  this.dialog.content.innerHTML = content;  
-                } else if(!!content.nodeName) {
-                    this.dialog.content.appendChild(content);
-                }  else if(Array.isArray(content)) {
-                    content.forEach((item) =>{
-                            this.dialog.content.appendChild(item);
-                    })
-                    
-                }
-                
-                
-            }
-            title(html) {
-                this.dialog.title( html);
-            }
-        }
-        
+  enable() {
+    this.dialog.root.classList.remove("disabled");
+  }
+  disable() {
+    this.dialog.root.classList.add("disabled");
+  }
+
+  open() {
+    this.dialog.show();
+    this.dispatch("show");
+  }
+
+  close() {
+    this.dialog.hide();
+    this.dispatch("close");
+  }
+
+  content(content) {
+    return this.html(content);
+  }
+  html(content) {
+    if (typeof content === "string") {
+      this.dialog.content.innerHTML = content;
+    } else if (!!content.nodeName) {
+      this.dialog.content.appendChild(content);
+    } else if (Array.isArray(content)) {
+      content.forEach((item) => {
+        this.dialog.content.appendChild(item);
+      });
+    }
+  }
+  title(html) {
+    this.dialog.title(html);
+  }
+}
