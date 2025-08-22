@@ -110,6 +110,10 @@
   cursor: initial;
 }
 
+.tox {
+  z-index: 3005;
+}
+
 .tox-tinymce {
   position: fixed !important;
   top: 0 !important;

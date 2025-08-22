@@ -87,14 +87,17 @@ export class CreateModule {
       .sort()
       .map((key) => {
         const target = $("div", { className: "template-preview-option" });
-        const preview = this.#templates[key](target, this.defaults || {});
+        const preview = this.#templates[key].render(
+          target,
+          this.defaults || {}
+        );
 
         return { value: key, content: target.outerHTML };
       });
   }
 
-  addTemplate(name, render) {
-    this.#templates[name] = render;
+  addTemplate(name, render, css) {
+    this.#templates[name] = { render, css };
   }
 
   getConfig(target) {
@@ -116,7 +119,23 @@ export class CreateModule {
         htarget.className = "component-content";
         target.appendChild(htarget);
       }
-      this.#templates[name](htarget, conf);
+      this.#templates[name].render(htarget, conf);
+      let styleNode = document.querySelector(
+        `[data-style-id="${htarget.dataset.id}"]`
+      );
+      if (styleNode) {
+        styleNode.remove();
+      }
+      htarget.dataset.id = $ir.prefix(Date.now());
+      if (this.#templates[name].css) {
+        styleNode = document.createElement("style");
+        styleNode.dataset.styleId = htarget.dataset.id;
+        styleNode.textContent = this.#templates[name].css.replace(
+          /\$root/g,
+          `[data-id="${htarget.dataset.id}"]`
+        );
+        target.appendChild(styleNode);
+      }
     }
   }
 
@@ -126,6 +145,10 @@ export class CreateModule {
       conf.template = "default";
       this.setConfig(target, conf);
     }
+    console.log();
+    console.log();
+    console.log();
+    console.log(conf);
     if (conf.css) {
       target.setAttribute("style", conf.css);
     }
@@ -135,7 +158,6 @@ export class CreateModule {
 
   select({ target, event }) {
     this.target(target);
-
     if (this.options.onSelect) {
       this.options.onSelect({ target, event });
     }

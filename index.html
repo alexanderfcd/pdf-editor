@@ -7,6 +7,7 @@
      <title>PDF editor</title>
      <meta name="viewport" content="width=device-width, initial-scale=1">
      <meta name="author" content="">
+     <link rel="stylesheet" href="./css/core.css">
      <link rel="stylesheet" href="./css/style.css">
      <link rel="stylesheet" href="colorpicker/colorpicker.css">
 
@@ -26,19 +27,32 @@
 
                  <div class="section" data-id="page-x">
                      <div class="section-content">
-                         <div class="component" style="top: 100px;width: 80%;height: 200px;left: 10%">
+                         <div class="component">
                              <script type="settings/json">
                                  {
                                     "name": "image",
                                     "template": "default",
                                     "radius": "0",
-                                    "file": "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg"
+                                    "file": "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg",
+                                    "css": "height:300px;width:100%"
                                 }
                             </script>
 
                          </div>
 
-                         <div class="component" style="top: 10px;width: 80%;height: 100px;left: 10%">
+                         <div class="component text">
+                             <script type="settings/json">
+                                 {
+                                    "name": "text",
+                                    "template": "default",
+                                    "content": "<h3>Producer, Vocalist, Composer Lyricist: Lana Del Rey</h3>",
+                                    "css": "width: 80%;left: 10%;text-align: center;top: 310px"
+                                }
+                            </script>
+
+                         </div>
+
+                         <div class="component">
                              <script type="settings/json">
                                  {
                                     "name": "gallery",
@@ -48,22 +62,16 @@
                                         "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg",
                                         "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg"
                                         
-                                    ] 
+                                    ],
+                                    "columns": 3,
+                                    "gap": 1,
+                                    "css": "height: 200px;width: 100%;top:370px;left:0"
                                 }
                             </script>
 
                          </div>
 
-                         <div class="component text" style="top: 300px;width: 80%;height: 100px;left: 10%">
-                             <script type="settings/json">
-                                 {
-                                    "name": "text",
-                                    "template": "default",
-                                    "content": "Producer, Vocalist, Composer Lyricist: Lana Del Rey"
-                                }
-                            </script>
-
-                         </div>
+                         
 
                      </div>
                  </div>
@@ -135,119 +143,7 @@
              margin: 20mm;
          }
 
-         .sections{
-            padding-top: calc(var(--toolbar-height) + var(--gap-box));
-         }
-
-         .layout-holder {
-             letter-spacing: 0;
-             line-height: 1.5;
-         }
-
-         .component.dragging {
-             box-shadow: 0 0 20px rgba(0, 0, 0, .2);
-
-             transition: box-shadow .2s, scale .2s;
-         }
-
-         .component {
-             position: absolute;
-             overflow: hidden;
-             background-color: white;
-             cursor: grab;
-
-
-         }
-
-         .component-content {
-
-             min-width: 100%;
-             min-height: 100%;
-         }
-
-         [data-type="image"] img,
-         [data-type="image"] picture {
-             width: 100%;
-             height: 100%;
-             display: block;
-             object-fit: cover;
-         }
-
-         .section,
-         .section-content {
-             width: 8.27in;
-             height: 11.69in;
-             position: relative;
-             margin-inline: auto;
-         }
-
-         .section-content {
-             overflow: hidden;
-             box-shadow: 0 0 5px 5px #d3d3d382;
-             background-color: #fff;
-         }
-
-         .section {
-
-
-             margin: 50px auto 0;
-             /*padding: 20mm;*/
-
-
-             transition: transform .5s;
-
-             &:first-child {
-                 margin-top: var(--padding);
-             }
-         }
-
-         .toolbox {
-             top: 0;
-             left: 0;
-             height: 100%;
-             width: 250px;
-             overflow: auto;
-             scrollbar-width: thin;
-             position: fixed;
-             background-color: white;
-             padding: 12px;
-             box-shadow: 5px 0 5px rgba(0, 0, 0, .02);
-         }
-
-         .g-input-block input {
-             width: 100%;
-             padding: 5px;
-         }
-
-         .g-input-block label {
-             display: block;
-             padding: 0 0 3px;
-         }
-
-         .g-input-block img {
-             max-width: 100%;
-         }
-
-         .g-input-block {
-             padding: 10px 0;
-         }
-
-         @media print {
-             #editor {
-                 display: none;
-             }
-
-             .section {
-                 width: 8.27in;
-                 height: 11.69in;
-
-                 box-shadow: none;
-                 margin: 0;
-
-
-
-             }
-         }
+         
      </style>
 
 

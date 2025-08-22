@@ -16,7 +16,9 @@ const modules = {};
 export class Editor extends CreateBase {
   constructor(options) {
     super();
-    const defaults = {};
+    const defaults = {
+      targetElement: document.body,
+    };
 
     this.settings = Object.assign({}, defaults, options);
     this.stateManager = new StateManager(this);
@@ -31,7 +33,7 @@ export class Editor extends CreateBase {
       const inst = this.createModule(modules[module].module);
       const templates = modules[module].templates;
       for (const name in templates) {
-        inst.addTemplate(name, templates[name].render);
+        inst.addTemplate(name, templates[name].render, templates[name].css);
       }
     }
   }
@@ -127,8 +129,6 @@ export class Editor extends CreateBase {
         );
       }
     });
-
-    console.log(this.guiEditor);
 
     this.on("activeNode", (node) => {
       if (node) {
@@ -258,7 +258,7 @@ export class Editor extends CreateBase {
     this.scale = new ScaleService(this);
     this.toolbar = Toolbar(this);
 
-    document.body.append(this.toolbar.node);
+    this.settings.targetElement.append(this.toolbar.node);
 
     ModulesInit(this);
     new LayoutManagerComponent(this.settings.sections);
