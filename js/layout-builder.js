@@ -102,6 +102,15 @@ class LayoutBuilderService {
     const comtentBlock = clone.querySelector(".section-content");
     clone.className = `section`;
     clone.setAttribute("style", target.getAttribute("style"));
+    for (let key in target.dataset) {
+      if (key === "id") {
+        clone.dataset[key] = $ir.prefix(
+          (Math.random() + 1).toString(36).substring(6) + Date.now()
+        );
+      } else {
+        clone.dataset[key] = target.dataset[key];
+      }
+    }
     comtentBlock.setAttribute(
       "style",
       target.querySelector(".section-content").getAttribute("style")

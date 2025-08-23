@@ -172,6 +172,10 @@ export class Editor extends CreateBase {
   handleMouseDown(e) {
     const node = e.target.closest(".component");
 
+    if (e.which && e.which !== 1) {
+      return;
+    }
+
     const isSystem = $ir.isSystem(e);
     if (isSystem) {
       return;

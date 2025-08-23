@@ -1,3 +1,5 @@
+import { TinyMCE } from "../../js/adapters/tinymce.js";
+
 Editor.addModule({
   name: "text",
   schema: [
@@ -22,22 +24,21 @@ Editor.addModule({
     },
   ],
   onUnSelect: ({ target, event }) => {},
-  onSelect: ({ target, event }) => {
+  onSelect: async ({ target, event }) => {
     if (!event.target.closest(".component-content")) {
       target.classList.remove("editing");
       return;
     }
 
-    if (!target.editor) {
-      target.editor = richText(target.querySelector(".component-content"));
-    } else {
-      setTimeout(async () => {
-        const editor = (await target.editor)[0];
+    $ir.componentHandle.hide();
 
-        editor.focus();
-        //editor.execCommand('SelectAll');
-      }, 1);
+    if (!target.editor) {
+      target.editor = new TinyMCE(target.querySelector(".component-content"));
+    } else {
+      await target.editor.focus();
     }
+
+    //
 
     target.classList.add("editing");
 

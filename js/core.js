@@ -224,6 +224,8 @@ export class CreateState extends CreateBase {
   }
 }
 
+export class RichTextAdapter extends CreateState {}
+
 export default {
   useAwait,
   useFetch,

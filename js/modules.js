@@ -21,7 +21,12 @@ addEventListener("load", () => {
   $ir.componentHandle.on("select", (data) => {
     const conf = getModuleConfig(data.target);
     const name = conf.name || "";
-    getModule(name).select(data);
+
+    if (data.target.classList.contains("editing")) {
+      $ir.componentHandle.hide();
+    } else {
+      getModule(name).select(data);
+    }
   });
 });
 
@@ -151,6 +156,13 @@ class Handle extends CreateBase {
     if (!this.target()) {
       return;
     }
+
+    if (this.target().classList.contains("editing")) {
+      if (this.#visible) {
+        this.hide();
+      }
+      return;
+    }
     const off = this.target().getBoundingClientRect();
     const oTop = off.top + scrollY - 50;
     const oleft = off.left + scrollX - 0;
@@ -176,6 +188,11 @@ class Handle extends CreateBase {
   target(node) {
     if (typeof node === "undefined") {
       return this.#target;
+    }
+
+    if (node && node.classList.contains("editing")) {
+      this.hide();
+      return;
     }
 
     this.#target = node;
