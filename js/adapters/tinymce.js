@@ -18,7 +18,7 @@ export class TinyMCE extends RichTextAdapter {
     return new Promise((resolve) => {
       if (!this.#editor) {
         this.#building = true;
-        this.#editor = tinymce.init({
+        tinymce.init({
           license_key: "gpl",
           target: this.target,
           license: false,
@@ -34,6 +34,7 @@ export class TinyMCE extends RichTextAdapter {
             editor.on("init", (e) => {
               setTimeout(() => {
                 editor.focus();
+                this.#editor = editor;
                 this.#building = false;
                 resolve(this);
               }, 1);
@@ -48,7 +49,7 @@ export class TinyMCE extends RichTextAdapter {
 
   async focus() {
     if (!this.#building) {
-      (await this.get()).focus();
+      (await this.get()).#editor.focus();
     }
   }
 }

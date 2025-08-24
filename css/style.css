@@ -144,19 +144,51 @@
 .layout-menu li {
   list-style: none;
 }
+.layout-menu .menu .layout-menu-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  transition: 0.2s;
+}
+.layout-menu .menu-start .layout-menu-btn {
+  margin-inline-start: -10px;
+}
+
+.layout-menu .menu-end .layout-menu-btn {
+  margin-inline-end: -10px;
+}
+.layout-menu .menu .layout-menu-btn {
+  display: flex;
+
+  width: 33px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.75);
+  height: 33px;
+  align-items: center;
+  justify-content: center;
+}
 .layout-menu .menu {
   position: sticky;
+  cursor: pointer;
   top: calc(var(--toolbar-height) + 15px);
+  pointer-events: all;
 }
 .layout-menu {
   position: absolute;
-  cursor: pointer;
+  pointer-events: none;
   z-index: 1;
   top: 20px;
-  left: calc(100% + 20px);
+  left: -40px;
+  right: -40px;
   height: calc(100% - 40px);
 
   border-radius: 5px;
+}
+
+.menu-start {
+  float: left;
+}
+
+.menu-end {
+  float: right;
 }
 
 /* GUI */

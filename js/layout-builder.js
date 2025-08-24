@@ -143,7 +143,13 @@ class LayoutBuilderService {
   }
   nav(layout) {
     const template = `
-        <ul class="menu bg-base-200 rounded-box">
+        <ul class="menu menu-start">
+          <li>
+                <a class="tooltip tooltip-left layout-menu-btn" data-tip="Add element" data-action="addModule">
+                  <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960" ><path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"/></svg></a>
+            </li>
+        </ul>
+        <ul class="menu menu-end">
             <li>
                 <a class="tooltip tooltip-left" data-tip="Move Up" data-action="moveUp">
                     <svg xmlns="http://www.w3.org/2000/svg" class="	" viewBox="0 -960 960 960"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg>

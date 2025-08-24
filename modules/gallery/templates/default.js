@@ -11,9 +11,9 @@ Editor.addModuleTemplate("gallery", {
     )
       .map(
         (f) =>
-          `<div  style="width:calc(${
-            100 / columns
-          }% - ${gap}px)"><img src="${f}"></div>`
+          `<div  style="width:calc(${100 / columns}% - ${Math.ceil(
+            gap / 2
+          )}px)"><img src="${f}"></div>`
       )
       .join("")}</div>`;
   },

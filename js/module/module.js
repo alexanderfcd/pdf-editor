@@ -116,7 +116,9 @@ export class CreateModule {
       let htarget = target.querySelector(".component-content");
       if (!htarget) {
         htarget = document.createElement("div");
-        htarget.className = "component-content";
+        htarget.className = `component-content${
+          conf.inlineEditable ? " component-inline-editable" : ""
+        }`;
         target.appendChild(htarget);
       }
       this.#templates[name].render(htarget, conf);
@@ -145,10 +147,7 @@ export class CreateModule {
       conf.template = "default";
       this.setConfig(target, conf);
     }
-    console.log();
-    console.log();
-    console.log();
-    console.log(conf);
+
     if (conf.css) {
       target.setAttribute("style", conf.css);
     }

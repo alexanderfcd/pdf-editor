@@ -241,6 +241,9 @@ export class Editor extends CreateBase {
       }
 
       const node = e.target.closest(".component");
+      const componentInlineEditable = e.target.closest(
+        ".component-inline-editable"
+      );
 
       if (!node) {
         this.selectedNode(null);
@@ -250,6 +253,15 @@ export class Editor extends CreateBase {
       if (node && this.selectedNode() !== node) {
         this.selectedNode(node);
 
+        $ir.componentHandle.dispatch("select", {
+          target: node,
+          event: e,
+        });
+      } else if (
+        componentInlineEditable &&
+        !node.classList.contains("editing") &&
+        this.selectedNode() === node
+      ) {
         $ir.componentHandle.dispatch("select", {
           target: node,
           event: e,

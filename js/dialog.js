@@ -200,6 +200,9 @@ export class Dialog {
                     .dialog-close svg{
                         width: 25px
                     }
+                    .dialog-close{
+                      color: #777
+                    }
                     .dialog-close:hover{
                         color: black
                     }
