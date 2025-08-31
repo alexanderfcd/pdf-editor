@@ -337,3 +337,34 @@
   border: 0px solid #eee !important;
   border-radius: 0 !important;
 }
+
+.ir-list-modules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-box);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ir-list-modules li svg {
+  fill: currentColor;
+  width: 50px;
+}
+.ir-list-modules li span {
+  text-transform: capitalize;
+}
+.ir-list-modules li {
+  display: inline-flex;
+  width: 110px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  flex-direction: column;
+}
+
+.ir-list-modules li:hover {
+  background-color: #8888884f;
+  transition: 0.3s;
+}

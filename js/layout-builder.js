@@ -1,4 +1,6 @@
+import { ModuleDialog } from "./dialog.js";
 import { renderModule } from "./module/module.js";
+import { createModule } from "./modules.js";
 
 class LayoutBuilderService {
   _events = {};
@@ -11,6 +13,31 @@ class LayoutBuilderService {
           c.call(this, f);
         })
       : "";
+  }
+
+  async addModule(target, template = "default") {
+    const dlg = new ModuleDialog();
+    const moduledata = await dlg.promise();
+    const module = createModule(
+      {
+        name: moduledata.name,
+        template: "default",
+        ...moduledata.defaults,
+      },
+      moduledata.defaultCSS
+    );
+
+    const off = target.getBoundingClientRect();
+    const otop =
+      target.ownerDocument.defaultView.scrollY -
+      (off.top + target.ownerDocument.defaultView.scrollY);
+
+    console.log(off.top, target.ownerDocument.defaultView.scrollY);
+
+    target.querySelector(".section-content").append(module);
+    renderModule(module);
+    module.style.top = `calc(${otop}px + var(--toolbar-height))`;
+    module.style.left = "calc(50% - " + module.offsetWidth / 2 + "px)";
   }
 
   delete(target) {

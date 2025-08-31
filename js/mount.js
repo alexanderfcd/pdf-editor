@@ -38,6 +38,22 @@ export class Editor extends CreateBase {
     }
   }
 
+  static getModulesMeta() {
+    const res = [];
+    for (let i in modules) {
+      const module = modules[i].module;
+
+      res.push({
+        name: module.name,
+        icon: module.icon,
+        defaults: module.defaults,
+        defaultCSS: module.defaultCSS,
+      });
+    }
+
+    return res;
+  }
+
   static addModule(module) {
     if (!modules[module.name]) {
       modules[module.name] = {

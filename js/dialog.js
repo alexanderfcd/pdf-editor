@@ -1,4 +1,4 @@
-import { CreateBase } from "./core.js";
+import { $, CreateBase } from "./core.js";
 
 export class Dialog {
   constructor(options) {
@@ -249,23 +249,28 @@ export class Dialog {
 export class CDialog extends CreateBase {
   constructor(options = {}) {
     super();
-    this.dialog = new Dialog(
-      Object.assign(
-        {},
-        {
-          width: "350px",
-          mode: "sidebar",
-          footer: false,
-          header: true,
-          content: ``,
-          closeAction: "hide",
-          overlay: false,
-        },
-        options
-      )
-    );
-    this.node = this.dialog.content;
+
+    this.settings = Object.assign({}, this.#defaults(), options);
+
+    this.build();
     this.dialog.hide();
+  }
+
+  #defaults() {
+    return {
+      width: "350px",
+      mode: "sidebar",
+      footer: false,
+      header: true,
+      content: ``,
+      closeAction: "hide",
+      overlay: false,
+    };
+  }
+
+  build() {
+    this.dialog = new Dialog(this.settings);
+    this.node = this.dialog.content;
   }
 
   enable() {
@@ -285,10 +290,10 @@ export class CDialog extends CreateBase {
     this.dispatch("close");
   }
 
-  content(content) {
-    return this.html(content);
-  }
   html(content) {
+    return this.content(content);
+  }
+  content(content) {
     if (typeof content === "string") {
       this.dialog.content.innerHTML = content;
     } else if (!!content.nodeName) {
@@ -301,5 +306,63 @@ export class CDialog extends CreateBase {
   }
   title(html) {
     this.dialog.title(html);
+  }
+}
+
+export class ModuleDialog extends CDialog {
+  constructor(options) {
+    super();
+
+    this.settings = Object.assign({}, this.#defaults(), options);
+
+    this.build();
+    this.title("Insert module");
+    this.displayModules();
+  }
+
+  displayModules() {
+    const list = $(`<ul  class="${$ir.prefix("list-modules")}" />`);
+    const modules = Editor.getModulesMeta();
+
+    modules.forEach((module) => {
+      const li = $(
+        `<li data-module="${module.name}">${module.icon}<span>${module.name}</span></li>`
+      );
+      li.__module = module;
+      list.appendChild(li);
+    });
+
+    this.content(list);
+
+    this.dialog.content.querySelector("ul").addEventListener("click", (e) => {
+      const li = e.target.closest("li");
+      if (li) {
+        this.dispatch("moduleSelected", li.__module);
+        this.#resolvers.forEach((resolve) => resolve(li.__module));
+        this.#resolvers = [];
+        this.#rejects = [];
+        this.dialog.remove();
+      }
+    });
+  }
+
+  #defaults() {
+    return {
+      width: "450px",
+      mode: "modal",
+      footer: false,
+      header: true,
+      content: ``,
+      closeAction: "remove",
+      overlay: true,
+    };
+  }
+
+  #resolvers = [];
+  #rejects = [];
+  promise() {
+    return new Promise((resolve, reject) => {
+      this.#resolvers.push(resolve);
+    });
   }
 }
