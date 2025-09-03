@@ -114,7 +114,8 @@ export class Dialog {
                         opacity: 0;
                         visibility: hidden;
                         display: none;
-                        transform: scale(.9);
+                        transition: .2s;
+               
                         z-index: 3001;
 
                         --padding: var(--gap-box);
@@ -139,9 +140,11 @@ export class Dialog {
                         opacity: 1;
                         visibility: visible;
                         display: block;
-                        transform: scale(1)
+           
                     }
-
+                    .dialog-modal{
+                        transform: translate(-50%,-50%);
+                    }
                     .dialog-sidebar{
                         top: calc(var(--padding) + var(--toolbar-height));
                         right: var(--gap-box);

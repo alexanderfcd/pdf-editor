@@ -2,69 +2,108 @@ import Framework from "./core.js";
 
 const { CreateState, $ } = Framework;
 
+import Sortable from "sortablejs";
+
 import ColorPicker from "../colorpicker/colorpicker.js";
 
 const file2image = (file) => {
   return new Promise((resolve, reject) => {
+    if (typeof file === "string") {
+      resolve(file);
+      return;
+    }
     var reader = new FileReader();
     reader.onload = function () {
       resolve(reader.result);
     };
+
     reader.readAsDataURL(file);
   });
 };
 
 const DecorateFile = (instance) => {
-  const target = $("div");
+  const target = $("div", {
+    className: "g-input-block-file-block",
+  });
+
+  let pauseDeepChange = false;
+
+  instance.sortable = Sortable.create(target, {
+    onChange: function (/**Event*/ evt) {
+      evt.newIndex; // most likely why this event is used is to get the dragging element's current index
+      // same properties as onEnd
+
+      console.log(evt, instance.sortable);
+
+      pauseDeepChange = true;
+      instance.setState(
+        Array.from(target.querySelectorAll("[data-val]")).map(
+          (a) => a.dataset.val
+        )
+      );
+    },
+  });
 
   instance.node().after(target);
 
-  instance.on("change", async () => {
-    const files = instance.value;
+  instance.$deepSetValue = (value) => {
+    if (!pauseDeepChange) {
+      target.innerHTML = value
+        .map((p) => {
+          const val = p.value || p;
+          return `
+          <span class="g-input-block-file" data-val="${val}">
+            <img src="${val}">
+          </span>
+          `;
+        })
+        .join("");
+    }
+  };
 
-    const res = await Promise.allSettled(
-      Array.from(files).map((file) => file2image(file))
-    );
-    target.innerHTML = res
-      .filter((p) => p.status === "fulfilled")
-      .map((p) => `<img src="${p.value}">`);
+  instance.on("change", async () => {
+    if (!pauseDeepChange) {
+      const files = instance.value;
+
+      const res = await Promise.allSettled(
+        Array.from(files).map(async (file) => await file2image(file))
+      );
+
+      instance.$deepSetValue(res);
+    }
   });
 };
 const DecorateNumber = (instance) => {
-  if (
-    typeof instance.props.min === "number" &&
-    typeof instance.props.max === "number"
-  ) {
-    const slider = $("input", {
-      id: `node-${Date.now()}`,
-      type: "range",
-      min: instance.props.min,
-      max: instance.props.max,
+  const slider = $("input", {
+    id: `node-${$ir.id()}`,
+    type: "range",
+    min: instance.props.min,
+    max: instance.props.max,
+  });
+  slider.addEventListener("input", () => {
+    instance.setValue(slider.value);
+  });
+  instance.on("change", () => {
+    slider.value = parseFloat(instance.value);
+  });
+  instance.node().after(slider);
+  if (instance.props.appendix) {
+    const appndx = $("span", {
+      innerHTML: instance.props.appendix,
+      className: $ir.prefix("appendix"),
     });
-    slider.addEventListener("input", () => {
-      instance.setValue(slider.value);
-    });
-    instance.on("change", () => {
-      slider.value = parseFloat(instance.value);
-    });
-    instance.node().after(slider);
-    if (instance.props.appendix) {
-      const appndx = $("span", {
-        innerHTML: instance.props.appendix,
-        className: $ir.prefix("appendix"),
-      });
-      instance.node().after(appndx);
-    }
-    instance.$deepSetValue = (value) => {
-      const val = parseFloat(value);
-      if (isNaN(val)) {
-        // in case of 'none', 'inherit', etc...
-        slider.value = 0;
-      } else {
-        slider.value = val;
-      }
-    };
+    instance.node().after(appndx);
   }
+  instance.$deepSetValue = (value) => {
+    const val = parseFloat(value);
+
+    if (isNaN(val)) {
+      // in case of 'none', 'inherit', etc...
+      slider.value = 0;
+    } else {
+      slider.value = val;
+    }
+  };
 };
 const DecorateColor = (instance) => {
   instance.colorPicker = new ColorPicker(instance.node(), {
@@ -112,7 +151,8 @@ class InputField extends CreateState {
     this.props = props;
     this.init();
   }
-  #field = $("input", { id: `node-${Date.now()}` });
+  #field = $("input", { id: `node-${$ir.id()}` });
+  $f = this.#field;
 
   node() {
     return this.#field;
@@ -160,7 +200,9 @@ class InputField extends CreateState {
 
     this.setState(value, trigger);
 
-    this.$deepSetValue(value);
+    setTimeout(() => {
+      this.$deepSetValue(value);
+    }, 3);
 
     if (this.validate && !this.validate(value)) {
       this.dispatch("invalid");
@@ -364,6 +406,7 @@ export class GUIEditor extends CreateState {
 
   buildBlock(obj) {
     let block;
+
     if (obj.type === "previewSelect") {
       block = new PreviewSelect(obj.label, obj.options);
     } else {

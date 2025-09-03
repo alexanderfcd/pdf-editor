@@ -272,6 +272,29 @@
   display: none;
 }
 
+.g-input-block-file-block {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.g-input-block .g-input-block-file img {
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+.g-input-block .g-input-block-file {
+  max-width: 100%;
+  width: calc(25% - 5px);
+  aspect-ratio: 1 / 1;
+  padding: 5px;
+  margin-bottom: 5px;
+  background: #eee;
+  border-radius: 5px;
+  display: block;
+}
+
 .ir-select.active .ir-select-content {
   display: block;
 }
@@ -280,21 +303,8 @@
   height: 100%;
 }
 
-.component.text {
-  padding: 12px;
-}
-.component.text:not(.editing) .component-content {
-  cursor: url("data:image/svg+xml,%0A%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='%23111111'%3E%3Cpath d='m490-527 37 37 217-217-37-37-217 217ZM200-200h37l233-233-37-37-233 233v37Zm355-205L405-555l167-167-29-29-219 219-56-56 218-219q24-24 56.5-24t56.5 24l29 29 50-50q12-12 28.5-12t28.5 12l93 93q12 12 12 28.5T828-678L555-405ZM270-120H120v-150l285-285 150 150-285 285Z'/%3E%3C/svg%3E")
-      4 12,
-    text;
-}
-
 [contenteditable] {
   outline: none;
-}
-.component.text.editing [contenteditable] {
-  outline: 1px dotted #b8b8b8;
-  outline-offset: 10px;
 }
 
 .component:not(.active):hover {
@@ -368,3 +378,47 @@
   background-color: #8888884f;
   transition: 0.3s;
 }
+
+/*layers*/
+.ir-layer-layout .ir-layer-name {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: #777;
+  font-weight: 500;
+}
+.ir-layer-module .ir-layer-name {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: #999;
+  font-weight: 500;
+}
+.ir-layer-module .ir-layer-handle {
+  cursor: grab;
+}
+
+.ir-layer-module {
+  border-top: 1px solid #eee;
+}
+.ir-layer-content {
+  position: relative;
+  padding: var(--gap-box);
+  justify-content: space-between;
+}
+.ir-layer-handle {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960' fill='%23e8eaed'%3E%3Cpath d='M160-360v-80h640v80H160Zm0-160v-80h640v80H160Z'/%3E%3C/svg%3E");
+}
+.ir-layer-layout + .ir-layer-layout {
+  margin-top: var(--gap-box);
+}
+.ir-layer-layout {
+  border: 1px solid #eee;
+  border-radius: 6px;
+}
+/*/layers*/

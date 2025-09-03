@@ -1,18 +1,11 @@
+import { CreateBase } from "./core.js";
 import { ModuleDialog } from "./dialog.js";
 import { renderModule } from "./module/module.js";
 import { createModule } from "./modules.js";
 
-class LayoutBuilderService {
-  _events = {};
-  on(e, f) {
-    this._events[e] ? this._events[e].push(f) : (this._events[e] = [f]);
-  }
-  dispatch(e, f) {
-    this._events[e]
-      ? this._events[e].forEach(function (c) {
-          c.call(this, f);
-        })
-      : "";
+class LayoutBuilderService extends CreateBase {
+  constructor(instance) {
+    super();
   }
 
   async addModule(target, template = "default") {
@@ -32,8 +25,6 @@ class LayoutBuilderService {
       target.ownerDocument.defaultView.scrollY -
       (off.top + target.ownerDocument.defaultView.scrollY);
 
-    console.log(off.top, target.ownerDocument.defaultView.scrollY);
-
     target.querySelector(".section-content").append(module);
     renderModule(module);
     module.style.top = `calc(${otop}px + var(--toolbar-height))`;
@@ -42,13 +33,21 @@ class LayoutBuilderService {
 
   delete(target) {
     if (confirm("Are you sure you want to delete selected element?")) {
-      target.style.opacity = 0;
-      const handleEnd = () => {
-        target.remove();
-        this.dispatch("change");
-      };
+      if (
+        target.parentNode.firstElementChild ===
+        target.parentNode.lastElementChild
+      ) {
+        console.log(target);
+      } else {
+        target.style.opacity = 0;
+        const handleEnd = () => {
+          target.remove();
+          this.dispatch("delete", target);
+          this.dispatch("change");
+        };
 
-      target.addEventListener("transitionend", handleEnd);
+        target.addEventListener("transitionend", handleEnd);
+      }
     }
   }
   moveUp(target) {
@@ -132,7 +131,7 @@ class LayoutBuilderService {
     for (let key in target.dataset) {
       if (key === "id") {
         clone.dataset[key] = $ir.prefix(
-          (Math.random() + 1).toString(36).substring(6) + Date.now()
+          (Math.random() + 1).toString(36).substring(6) + $ir.id()
         );
       } else {
         clone.dataset[key] = target.dataset[key];
@@ -142,7 +141,7 @@ class LayoutBuilderService {
       "style",
       target.querySelector(".section-content").getAttribute("style")
     );
-    clone.dataset.id = $ir.prefix(Date.now());
+    clone.dataset.id = $ir.id();
     target.after(clone);
 
     target.querySelectorAll(".component").forEach((e) => {
@@ -218,11 +217,12 @@ class LayoutBuilderService {
 }
 
 export class LayoutManagerComponent {
-  constructor(target) {
-    this.layoutService = new LayoutBuilderService();
-    this.target = target;
+  constructor(instance) {
+    this.layoutService = new LayoutBuilderService(instance);
+    this.target = instance.settings.sections;
     this.mount();
     this.layoutService.buttonsVisibility(this.target);
+
     this.layoutService.on("change", () => {
       setTimeout(() => {
         this.layoutService.buttonsVisibility(this.target);

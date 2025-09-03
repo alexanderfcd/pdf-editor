@@ -3,10 +3,8 @@ Editor.addModuleTemplate("gallery", {
   render: (target, options) => {
     const gap = parseFloat(options.gap || 0);
     const columns = Number(options.columns || 1);
-    console.log(options);
-    console.log(columns);
 
-    target.innerHTML = `<div class="gallery-default-wrapper" style="gap: ${gap}px;">${(
+    target.innerHTML = `<div class="gallery-default-wrapper" style="row-gap: ${gap}px;">${(
       options.files || []
     )
       .map(

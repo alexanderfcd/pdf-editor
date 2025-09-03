@@ -220,9 +220,11 @@ export const createModule = (options, css, id) => {
   if (css) {
     component.setAttribute("style", css.trim());
   }
+
   if (id) {
     component.dataset.id = id;
   }
+
   return component;
 };
 

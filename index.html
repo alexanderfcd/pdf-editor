@@ -33,7 +33,7 @@
                                     "name": "image",
                                     "template": "default",
                                     "radius": "0",
-                                    "file": "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg",
+                                    "file": "https://placehold.co/600x400/EEE/31343C",
                                     "css": "height:300px;width:100%"
                                 }
                             </script>
@@ -59,9 +59,9 @@
                                     "name": "gallery",
                                     "template": "default",
                                     "files": [
-                                        "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg",
-                                        "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg",
-                                        "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg"
+                                        "https://placehold.co/600x400/EEE/31343C",
+                                        "https://placehold.co/600x400/EEE/31343C",
+                                        "https://placehold.co/600x400/EEE/31343C"
                                         
                                     ],
                                     "columns": 3,
@@ -164,7 +164,12 @@
          ;
          (function() {
              const prefix = 'ir-';
+             let _id = Date.now();
              window.$ir = {
+                 id() {
+                
+                    return this.prefix(_id++);
+                 },
                  prefix(str) {
                      return `${prefix}${str}`;
                  },

@@ -206,7 +206,7 @@ export class CreateState extends CreateBase {
   }
 
   #state;
-  #id = `${Date.now()}`;
+  #id = `${$ir.id()}`;
 
   getState() {
     return this.#state;

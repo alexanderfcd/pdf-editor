@@ -128,14 +128,13 @@ export class CreateModule {
       if (styleNode) {
         styleNode.remove();
       }
-      htarget.dataset.id = $ir.prefix(Date.now());
+      htarget.dataset.id = $ir.id();
       if (this.#templates[name].css) {
         styleNode = document.createElement("style");
         styleNode.dataset.styleId = htarget.dataset.id;
-        styleNode.textContent = this.#templates[name].css.replace(
-          /\$root/g,
-          `[data-id="${htarget.dataset.id}"]`
-        );
+        styleNode.textContent = this.#templates[name].css
+          .replace(/\$root/g, `[data-id="${htarget.dataset.id}"]`)
+          .replace(/\$component/g, `[data-id="${target.dataset.id}"]`);
         target.appendChild(styleNode);
       }
     }

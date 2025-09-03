@@ -10,6 +10,7 @@ import { CDialog } from "./dialog.js";
 import { CreateBase } from "./core.js";
 import { ScaleService } from "./scale.js";
 import { Toolbar } from "./toolbar.js";
+import { Layers } from "./layers.js";
 
 const modules = {};
 
@@ -179,10 +180,8 @@ export class Editor extends CreateBase {
     this.guiEditor.setValue(val, false);
   }
 
-  #id = Date.now();
-
   id() {
-    return $ir.prefix(this.#id++);
+    return $ir.id();
   }
 
   handleMouseDown(e) {
@@ -216,6 +215,7 @@ export class Editor extends CreateBase {
       if (!node.dataset.id) {
         node.dataset.id = this.id();
       }
+
       if (this.activeNode() !== node) {
         document
           .querySelectorAll(".editing")
@@ -293,12 +293,15 @@ export class Editor extends CreateBase {
     this.settings.targetElement.append(this.toolbar.node);
 
     ModulesInit(this);
-    new LayoutManagerComponent(this.settings.sections);
+    this.layoutManager = new LayoutManagerComponent(this);
+    this.layoutManagerService = this.layoutManager.layoutService;
     this.GUIEditor();
 
     this.events();
 
     initDraggable(this);
+
+    this.layers = new Layers(this);
   }
 }
 
