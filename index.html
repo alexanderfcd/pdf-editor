@@ -55,6 +55,48 @@
                             </script>
                          </div>
                      </div>
+                 </div><div class="section" data-id="page-x">
+                     <div class="section-content">
+                         <div class="component">
+                             <script type="settings/json">
+                                 {
+                                    "name": "image",
+                                    "template": "default",
+                                    "radius": "0",
+                                    "file": "https://placehold.co/600x400/EEE/31343C",
+                                    "css": "height:300px;width:100%"
+                                }
+                            </script>
+                         </div>
+                         <div class="component text">
+                             <script type="settings/json">
+                                 {
+                                    "name": "text",
+                                    "template": "default",
+                                    "content": "<h3>Producer, Vocalist, Composer Lyricist: Lana Del Rey</h3>",
+                                    "css": "width: 80%;left: 10%;text-align: center;top: 310px",
+                                    "inlineEditable": true
+                                }
+                            </script>
+                         </div>
+                         <div class="component">
+                             <script type="settings/json">
+                                 {
+                                    "name": "gallery",
+                                    "template": "default",
+                                    "files": [
+                                        "https://placehold.co/600x400/EEE/31343C",
+                                        "https://placehold.co/600x400/EEE/31343C",
+                                        "https://placehold.co/600x400/EEE/31343C"
+                                        
+                                    ],
+                                    "columns": 3,
+                                    "gap": 1,
+                                    "css": "height: 200px;width: 100%;top:370px;left:0"
+                                }
+                            </script>
+                         </div>
+                     </div>
                  </div>
              </div>
              <div class="ctrlboxes"></div>
@@ -65,6 +107,7 @@
      <script src="./dist/modules.js"></script>
      <script>
          addEventListener('DOMContentLoaded', () => {
+             //window.pdfEditor = new PDFPreview({
              window.pdfEditor = new Editor({
                  editor: document.querySelector('#editor'),
                  sections: document.querySelector('.sections'),

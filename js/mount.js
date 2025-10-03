@@ -14,7 +14,45 @@ import { Layers } from "./layers.js";
 
 const modules = {};
 
-export class Editor extends CreateBase {
+export class Preview extends CreateBase {
+  constructor(options) {
+    super();
+    const defaults = {
+      targetElement: document.body,
+    };
+
+    this.settings = Object.assign({}, defaults, options);
+
+    let mode = "preview";
+
+    console.log(this instanceof Preview);
+    console.log(this instanceof Editor);
+    if (this instanceof Editor) {
+      mode = "edit";
+    }
+
+    this.prepareModules();
+    this.settings.targetElement.classList.add(`${$ir.prefix(`mode-${mode}`)}`);
+  }
+
+  createModule = (options) => {
+    const Module = new CreateModule(options);
+    Module.root = this;
+    return Module;
+  };
+
+  prepareModules() {
+    for (const module in modules) {
+      const inst = this.createModule(modules[module].module);
+      const templates = modules[module].templates;
+      for (const name in templates) {
+        inst.addTemplate(name, templates[name].render, templates[name].css);
+      }
+    }
+  }
+}
+
+export class Editor extends Preview {
   constructor(options) {
     super();
     const defaults = {
@@ -26,17 +64,7 @@ export class Editor extends CreateBase {
 
     this.mount();
 
-    this.#prepareModules();
-  }
-
-  #prepareModules() {
-    for (const module in modules) {
-      const inst = this.createModule(modules[module].module);
-      const templates = modules[module].templates;
-      for (const name in templates) {
-        inst.addTemplate(name, templates[name].render, templates[name].css);
-      }
-    }
+    this.prepareModules();
   }
 
   static getModulesMeta() {
@@ -77,12 +105,6 @@ export class Editor extends CreateBase {
       };
     }
   }
-
-  createModule = (options) => {
-    const Module = new CreateModule(options);
-    Module.root = this;
-    return Module;
-  };
 
   // mousedown and touchstart makes the element active
   // when activenode changes it sets the selected node to null
@@ -305,4 +327,5 @@ export class Editor extends CreateBase {
   }
 }
 
+globalThis.PDFPreview = Preview;
 globalThis.Editor = Editor;
