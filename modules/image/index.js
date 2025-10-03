@@ -24,7 +24,7 @@ Editor.addModule({
     },
   ],
   defaults: {
-    file: "https://images.pexels.com/photos/4762770/pexels-photo-4762770.jpeg",
+    file: "https://placehold.co/600x400/EEE/31343C",
     radius: 10,
   },
   defaultCSS: `

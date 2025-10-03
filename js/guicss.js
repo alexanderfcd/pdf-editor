@@ -6,7 +6,7 @@ import Sortable from "sortablejs";
 
 import ColorPicker from "../colorpicker/colorpicker.js";
 
-const file2image = (file) => {
+const file2url = (file) => {
   return new Promise((resolve, reject) => {
     if (typeof file === "string") {
       resolve(file);
@@ -33,14 +33,13 @@ const DecorateFile = (instance) => {
       evt.newIndex; // most likely why this event is used is to get the dragging element's current index
       // same properties as onEnd
 
-      console.log(evt, instance.sortable);
-
       pauseDeepChange = true;
       instance.setState(
         Array.from(target.querySelectorAll("[data-val]")).map(
           (a) => a.dataset.val
         )
       );
+      pauseDeepChange = false;
     },
   });
 
@@ -48,16 +47,19 @@ const DecorateFile = (instance) => {
 
   instance.$deepSetValue = (value) => {
     if (!pauseDeepChange) {
-      target.innerHTML = value
-        .map((p) => {
-          const val = p.value || p;
-          return `
+      target.innerHTML = "";
+
+      value.forEach((p) => {
+        const val = p.value || p;
+
+        const item = $(`
           <span class="g-input-block-file" data-val="${val}">
             <img src="${val}">
+            <span class="g-input-block-file-delete"></span>
           </span>
-          `;
-        })
-        .join("");
+          `);
+        target.append(item);
+      });
     }
   };
 
@@ -66,7 +68,7 @@ const DecorateFile = (instance) => {
       const files = instance.value;
 
       const res = await Promise.allSettled(
-        Array.from(files).map(async (file) => await file2image(file))
+        Array.from(files).map(async (file) => await file2url(file))
       );
 
       instance.$deepSetValue(res);
@@ -164,11 +166,15 @@ class InputField extends CreateState {
       const val = this.#field.files || this.#field.value;
 
       if (this.#field.type === "file") {
-        Promise.allSettled(
-          Array.from(val).map((file) => file2image(file))
-        ).then((res) => {
-          this.setValue(res.map((o) => o.value));
-        });
+        Promise.allSettled(Array.from(val).map((file) => file2url(file))).then(
+          (res) => {
+            if (this.props.multiple) {
+              this.addValue(res.map((o) => o.value));
+            } else {
+              this.setValue(res.map((o) => o.value));
+            }
+          }
+        );
       } else {
         this.setValue(val);
       }
@@ -176,6 +182,19 @@ class InputField extends CreateState {
   }
 
   $deepSetValue() {}
+
+  addValue(value, trigger) {
+    const current = this.value;
+    if (Array.isArray(current)) {
+      let val;
+      if (Array.isArray(value)) {
+        val = [...current, ...value];
+      } else {
+        val = [...current, value];
+      }
+      this.setValue(val, trigger);
+    }
+  }
 
   setValue(value, trigger = true) {
     if (trigger) {

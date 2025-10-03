@@ -19,3 +19,22 @@ import Moveable from "moveable";
 
 window.Moveable = Moveable;
 window.tinymce = tinymce;
+
+(function () {
+  const prefix = "ir-";
+  let _id = Date.now();
+  window.$ir = {
+    id() {
+      return this.prefix(_id++);
+    },
+    prefix(str) {
+      return `${prefix}${str}`;
+    },
+    isSystem: (e) => {
+      const target = e.target ? e.target : e;
+      return !!target.closest(
+        ".toolbox,.dialog,#gtx-trans,.tox,.handle,.ir-toolbar"
+      );
+    },
+  };
+})();

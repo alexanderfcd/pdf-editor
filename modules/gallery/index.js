@@ -38,9 +38,9 @@ Editor.addModule({
     columns: 3,
     gap: 0,
     files: [
-      "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg",
-      "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg",
-      "https://greggvanourek.com/wp-content/uploads/2023/08/Nature-path-by-water-trees-and-mountains-AdobeStock_291242770-scaled.jpeg",
+      "https://placehold.co/600x400/EEE/31343C",
+      "https://placehold.co/600x400/EEE/31343C",
+      "https://placehold.co/600x400/EEE/31343C",
     ],
   },
   defaultCSS: `width: 80%; height: 250px`,
