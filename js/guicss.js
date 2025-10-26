@@ -1,4 +1,4 @@
-import Framework from "./core.js";
+import Framework, { $$ } from "./core.js";
 
 const { CreateState, $ } = Framework;
 
@@ -49,16 +49,22 @@ const DecorateFile = (instance) => {
     if (!pauseDeepChange) {
       target.innerHTML = "";
 
-      value.forEach((p) => {
+      value.forEach((p, i) => {
         const val = p.value || p;
 
-        const item = $(`
+        const item = $$(`
           <span class="g-input-block-file" data-val="${val}">
             <img src="${val}">
-            <span class="g-input-block-file-delete"></span>
+            <span data-ref="deleteButton" class="g-input-block-file-delete"></span>
           </span>
           `);
-        target.append(item);
+        target.append(item.node);
+
+        item.deleteButton.addEventListener("click", () => {
+          item.node.remove();
+          // removing is based on index, because the array may contain primitives
+          instance.setValue(value.filter((itm, itmIndex) => itmIndex !== i));
+        });
       });
     }
   };
@@ -178,6 +184,8 @@ class InputField extends CreateState {
       } else {
         this.setValue(val);
       }
+
+      this.#field.value = "";
     });
   }
 

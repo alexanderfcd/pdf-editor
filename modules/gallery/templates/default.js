@@ -2,9 +2,10 @@ Editor.addModuleTemplate("gallery", {
   name: "default",
   render: (target, options) => {
     const gap = parseFloat(options.gap || 0);
+    const rowHeight = parseFloat(options.rowHeight || 0);
     const columns = Number(options.columns || 1);
 
-    target.innerHTML = `<div class="gallery-default-wrapper" style="row-gap: ${gap}px;">${(
+    target.innerHTML = `<div class="gallery-default-wrapper" style="row-gap: ${gap}px;--rowHeight:${rowHeight}px">${(
       options.files || []
     )
       .map(
@@ -16,6 +17,9 @@ Editor.addModuleTemplate("gallery", {
       .join("")}</div>`;
   },
   css: `
+    $root .gallery-default-wrapper > div{
+      height: var(--rowHeight)
+    }
     $root .gallery-default-wrapper{
       display:flex;
       flex-wrap: wrap;
