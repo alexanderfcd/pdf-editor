@@ -8,7 +8,7 @@ Editor.addModule({
     {
       label: "content",
       props: {
-        type: "text",
+        type: "hidden",
       },
 
       name: "content",

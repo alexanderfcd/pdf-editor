@@ -21,16 +21,7 @@ Editor.addModule({
 
       name: "columns",
     },
-    {
-      label: "Row height",
-      props: {
-        type: "number",
-        min: 1,
-        max: 1000,
-      },
 
-      name: "rowHeight",
-    },
     {
       label: "Gap",
       props: {

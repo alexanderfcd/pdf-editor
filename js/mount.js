@@ -25,8 +25,6 @@ export class Preview extends CreateBase {
 
     let mode = "preview";
 
-    console.log(this instanceof Preview);
-    console.log(this instanceof Editor);
     if (this instanceof Editor) {
       mode = "edit";
     }

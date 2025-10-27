@@ -240,7 +240,9 @@
 }
 
 .ir-select-content > [data-value]:hover {
-  background-color: #efecec;
+  background-color: #ffffff;
+  outline: 1px solid #343434;
+  box-shadow: 0 0 2px #e0e0e0;
 }
 .ir-select {
   --size: 120px;
@@ -273,6 +275,11 @@
   display: none;
 }
 
+.g-input-block-file-block
+  .g-input-block-file:first-child
+  .g-input-block-file-delete {
+  display: none !important;
+}
 .g-input-block-file-block {
   display: flex;
   position: relative;

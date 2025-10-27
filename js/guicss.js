@@ -49,7 +49,9 @@ const DecorateFile = (instance) => {
     if (!pauseDeepChange) {
       target.innerHTML = "";
 
-      value.forEach((p, i) => {
+      const iterable = Array.isArray(value) ? value : [value];
+
+      iterable.forEach((p, i) => {
         const val = p.value || p;
 
         const item = $$(`
@@ -152,14 +154,17 @@ const DecorateField = (instance) => {
 };
 
 class InputField extends CreateState {
+  #field;
   constructor(props, validate) {
     super();
+    let nodeName = "input";
 
+    this.#field = $(nodeName, { id: `node-${$ir.id()}` });
     this.validate = validate;
     this.props = props;
     this.init();
   }
-  #field = $("input", { id: `node-${$ir.id()}` });
+
   $f = this.#field;
 
   node() {

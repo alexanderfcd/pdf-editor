@@ -2,16 +2,20 @@ Editor.addModuleTemplate("gallery", {
   name: "default",
   render: (target, options) => {
     const gap = parseFloat(options.gap || 0);
-    const rowHeight = parseFloat(options.rowHeight || 0);
-    const columns = Number(options.columns || 1);
 
-    target.innerHTML = `<div class="gallery-default-wrapper" style="row-gap: ${gap}px;--rowHeight:${rowHeight}px">${(
-      options.files || []
-    )
+    const columns = Number(options.columns || 1);
+    const files = options.files || [];
+    const numberOfRows = Math.ceil(files.length / columns);
+
+    const rowHeight = `calc(${100 / numberOfRows}% - ${
+      gap / (numberOfRows % 2 === 0 ? 2 : 1.5)
+    }px)`;
+
+    target.innerHTML = `<div class="gallery-default-wrapper" style="row-gap: ${gap}px;--rowHeight:${rowHeight}">${files
       .map(
         (f) =>
           `<div  style="width:calc(${100 / columns}% - ${Math.ceil(
-            gap / 2
+            columns === 1 ? 0 : gap / 2
           )}px)"><img src="${f}"></div>`
       )
       .join("")}</div>`;
