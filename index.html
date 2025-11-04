@@ -110,10 +110,52 @@
      <script src="./dist/modules.js"></script>
      <script>
          addEventListener('DOMContentLoaded', () => {
-             //window.pdfEditor = new PDFPreview({
-             window.pdfEditor = new Editor({
+            let action = PDFPreview;
+            if(location.href.includes('edit')) {
+                action = Editor
+            }
+             window.pdfEditor = new action({
+             // window.pdfEditor = new PDFPreview({
+             //window.pdfEditor = new Editor({
                  editor: document.querySelector('#editor'),
                  sections: document.querySelector('.sections'),
+                 data: [
+                    {
+                        id: 'hero-section',
+                        components: [
+                        {
+                            "name": "text",
+                            "template": "default",
+                            "content": "<h3>Black window, Vocalist, Composer Lyricist: Lana Del Rey</h3>",
+                            "css": "width: 80%;left: 10%;text-align: center;top: 310px",
+                            "inlineEditable": true
+                        },
+                        {
+                            "name": "image",
+                            "template": "default",
+                            "radius": "0",
+                            "file": "https://placehold.co/600x400/EEE/31343C",
+                            "css": "height:300px;width:100%"
+                        }
+                    ],
+                    },
+                    [
+                        {
+                            "name": "text",
+                            "template": "default",
+                            "content": "<h3>Producer, Vocalist, Composer Lyricist: Lana Del Rey</h3>",
+                            "css": "width: 80%;left: 10%;text-align: center;top: 310px",
+                            "inlineEditable": true
+                        },
+                        {
+                            "name": "image",
+                            "template": "default",
+                            "radius": "0",
+                            "file": "https://placehold.co/600x400/EEE/31343C",
+                            "css": "height:300px;width:100%"
+                        }
+                    ]
+                 ]
              });
         });
      </script>

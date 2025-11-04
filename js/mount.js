@@ -59,6 +59,7 @@ export class Editor extends Preview {
 
     this.settings = Object.assign({}, defaults, options);
     this.stateManager = new StateManager(this);
+    console.log(this.settings);
 
     this.mount();
 
@@ -230,6 +231,13 @@ export class Editor extends Preview {
       if (this.activeNode() && this.activeNode().moveable) {
         this.activeNode().moveable.selfElement.style.display = "none";
       }
+
+      if (this.activeNode()) {
+        $ir.componentHandle.dispatch("unselect", {
+          target: this.activeNode(),
+          event: e,
+        });
+      }
       this.activeNode(null);
     } else {
       if (!node.dataset.id) {
@@ -306,9 +314,38 @@ export class Editor extends Preview {
     });
   }
 
+  #renderLayoutComponents(layout) {
+    const components = layout.components || layout;
+    return components
+      .map((component) => {
+        return `
+        <div class="component">
+          <script type="settings/json">
+            ${JSON.stringify(component)}
+          </script>
+        </div>`;
+      })
+      .join("");
+  }
+  renderData(pdata) {
+    const data = pdata || this.settings.data;
+    if (!data) {
+      return;
+    }
+    const html = data.map((layout, i) => {
+      return `<div class="section" data-id="${layout.id || `layout-${i}`}">
+                <div class="section-content">
+                ${this.#renderLayoutComponents(layout)}
+                </div>
+              </div>`;
+    });
+    this.settings.sections.innerHTML = html;
+  }
+
   mount() {
     this.scale = new ScaleService(this);
     this.toolbar = Toolbar(this);
+    this.renderData();
 
     this.settings.targetElement.append(this.toolbar.node);
 

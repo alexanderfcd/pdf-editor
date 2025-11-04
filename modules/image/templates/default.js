@@ -2,7 +2,7 @@ Editor.addModuleTemplate("image", {
   name: "default",
   render: (target, options) => {
     const radius = options.radius || 0;
-    target.innerHTML = `<img src="${options.file}"  tyle=" border-radius: ${radius}">`;
+    target.innerHTML = `<img src="${options.file}" style=" border-radius: ${radius}">`;
   },
   css: `
         $root img {

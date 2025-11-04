@@ -12,6 +12,9 @@ addEventListener("load", () => {
     renderModule(el);
   });
 
+  $ir.componentHandle.on("unselect", (data) => {
+    globalThis.__moduleConfig.dialog.close();
+  });
   $ir.componentHandle.on("selectStart", (data) => {
     const conf = getModuleConfig(data.target);
     const name = conf.name || "";

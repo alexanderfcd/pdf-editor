@@ -27,7 +27,7 @@ export class TinyMCE extends RichTextAdapter {
           icons: "default",
           plugins: "image lists code table codesample",
           toolbar:
-            "blocks | forecolor backcolor | bold italic underline strikethrough | link blockquote codesample | align bullist numlist ",
+            "blocks | forecolor backcolor | bold italic underline strikethrough | link blockquote codesample | align bullist numlist | table",
           height: 400,
           content_style: "body { margin: 0%; }",
           setup: (editor) => {

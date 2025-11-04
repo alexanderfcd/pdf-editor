@@ -7,9 +7,9 @@ Editor.addModuleTemplate("gallery", {
     const files = options.files || [];
     const numberOfRows = Math.ceil(files.length / columns);
 
-    const rowHeight = `calc(${100 / numberOfRows}% - ${
-      gap / (numberOfRows % 2 === 0 ? 2 : 1.5)
-    }px)`;
+    let rowSpace = numberOfRows > 1 ? (numberOfRows % 2 === 0 ? 2 : 1.5) : 0;
+
+    const rowHeight = `calc(${100 / numberOfRows}% - ${gap / rowSpace}px)`;
 
     target.innerHTML = `<div class="gallery-default-wrapper" style="row-gap: ${gap}px;--rowHeight:${rowHeight}">${files
       .map(

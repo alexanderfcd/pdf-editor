@@ -50,7 +50,9 @@ body.ir-dragging * {
   cursor: grabbing !important;
 }
 
-@page {
-  size: A4;
-  margin: 20mm;
+@media print {
+  @page {
+    size: A4;
+    margin: 20mm;
+  }
 }

@@ -1,6 +1,7 @@
 @import url(./global.css);
 @import url(./range.css);
 @import url(./buttons.css);
+@import url(https://cdn.tiny.cloud/1/qagffr3pkuv17a8on1afax661irst1hbr4e6tbv888sz91jc/tinymce/8.2.0-84/skins/ui/oxide-dark/content.min.css);
 
 :root {
   --toolbar-height: 70px;
@@ -331,8 +332,10 @@
   outline: none;
 }
 
-.component:not(.active):hover {
-  outline: 2px solid #6042c4;
+@media screen {
+  .component:not(.active):hover {
+    outline: 2px solid #6042c4;
+  }
 }
 
 .ir-toolbar-container {

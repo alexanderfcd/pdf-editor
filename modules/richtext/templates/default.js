@@ -3,12 +3,24 @@ Editor.addModuleTemplate("text", {
   render: (target, options) => {
     const radius = options.radius || 0;
 
-    target.innerHTML = `<div style="border-radius: ${radius}px">${options.content}</div>`;
+    target.innerHTML = `<div>${options.content}</div>`;
+    target.style.borderRadius = `${radius}px`;
+    console.log(radius, target);
   },
   css: `
  
     $root {
-      margin: 15px;
+    --gap: 15px;
+      margin: var( --gap);
+      display: flex;
+    
+          min-height: calc(100% - (2 * var( --gap)));
+          min-width: calc(100% - (2 * var( --gap)));
+    
+ 
+     
+      align-items: center;
+      
     }
     $component .component-content li{
       margin: 0 0 0 1em;
