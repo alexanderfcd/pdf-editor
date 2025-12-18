@@ -1,6 +1,6 @@
-import { $, CreateState } from "./core";
-import { CDialog } from "./dialog";
-import { getModuleConfig } from "./module/module-config";
+import { $, CreateState } from "./core.js";
+import { CDialog } from "./dialog.js";
+import { getModuleConfig } from "./module/module-config.js";
 
 export class Layers {
   constructor(root) {

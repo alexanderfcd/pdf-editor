@@ -2,13 +2,13 @@
 import tinymce from "tinymce";
 
 // Include the required TinyMCE plugins and themes
-import "tinymce/icons/default"; // Icon set
-import "tinymce/themes/silver"; // Theme (e.g., 'silver')
-import "tinymce/plugins/code";
-import "tinymce/plugins/lists";
-import "tinymce/plugins/table";
-import "tinymce/plugins/codesample";
-import "tinymce/models/dom/model";
+import "tinymce/icons/default/icons.js"; // Icon set
+import "tinymce/themes/silver/theme.js"; // Theme (e.g., 'silver')
+import "tinymce/plugins/code/plugin.js";
+import "tinymce/plugins/lists/plugin.js";
+import "tinymce/plugins/table/plugin.js";
+import "tinymce/plugins/codesample/plugin.js";
+import "tinymce/models/dom/model.js";
 
 import "tinymce/skins/ui/oxide/skin.min.css";
 import "tinymce/skins/content/default/content.min.css";

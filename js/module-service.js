@@ -2,7 +2,7 @@ import {
   getModuleConfig,
   getOwnerId,
   saveModuleStyle,
-} from "./module/module-config";
+} from "./module/module-config.js";
 
 export class ModuleService {
   constructor(instance) {

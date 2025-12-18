@@ -30,7 +30,38 @@ export class Preview extends CreateBase {
     }
 
     this.prepareModules();
+    this.renderData();
     this.settings.targetElement.classList.add(`${$ir.prefix(`mode-${mode}`)}`);
+    this.dispatch("ready");
+  }
+
+  #renderLayoutComponents(layout) {
+    const components = layout.components || layout;
+    return components
+      .map((component) => {
+        return `
+        <div class="component">
+          <script type="settings/json">
+            ${JSON.stringify(component)}
+          </script>
+        </div>`;
+      })
+      .join("");
+  }
+
+  renderData(pdata) {
+    const data = pdata || this.settings.data;
+    if (!data) {
+      return;
+    }
+    const html = data.map((layout, i) => {
+      return `<div class="section" data-id="${layout.id || `layout-${i}`}">
+                <div class="section-content">
+                ${this.#renderLayoutComponents(layout)}
+                </div>
+              </div>`;
+    });
+    this.settings.sections.innerHTML = html;
   }
 
   createModule = (options) => {
@@ -59,11 +90,11 @@ export class Editor extends Preview {
 
     this.settings = Object.assign({}, defaults, options);
     this.stateManager = new StateManager(this);
-    console.log(this.settings);
 
     this.mount();
 
     this.prepareModules();
+    this.dispatch("ready");
   }
 
   static getModulesMeta() {
@@ -147,11 +178,14 @@ export class Editor extends Preview {
       schema: fields,
     }).on("change", (data) => {
       if (this.activeNode()) {
-        data.forEach(
-          (o) => (this.activeNode().style[o.prop || o.name] = o.value)
-        );
+        data.forEach((o) => {
+          this.activeNode().style[o.prop || o.name] = o.value;
+          this.activeNode().style.setProperty(`--${o.name}`, o.value);
+        });
 
         this.activeNode().moveable.updateRect();
+
+        console.log(data);
 
         let immediate =
           this.activeNode().dataset.id !==
@@ -193,6 +227,7 @@ export class Editor extends Preview {
         value = 0;
       }
       return {
+        [`--${o.name}`]: o.name,
         name: o.name,
         value,
       };
@@ -312,34 +347,6 @@ export class Editor extends Preview {
         });
       }
     });
-  }
-
-  #renderLayoutComponents(layout) {
-    const components = layout.components || layout;
-    return components
-      .map((component) => {
-        return `
-        <div class="component">
-          <script type="settings/json">
-            ${JSON.stringify(component)}
-          </script>
-        </div>`;
-      })
-      .join("");
-  }
-  renderData(pdata) {
-    const data = pdata || this.settings.data;
-    if (!data) {
-      return;
-    }
-    const html = data.map((layout, i) => {
-      return `<div class="section" data-id="${layout.id || `layout-${i}`}">
-                <div class="section-content">
-                ${this.#renderLayoutComponents(layout)}
-                </div>
-              </div>`;
-    });
-    this.settings.sections.innerHTML = html;
   }
 
   mount() {

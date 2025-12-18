@@ -1,6 +1,15 @@
 import { CDialog } from "../dialog.js";
 import { GUIEditor } from "../guicss.js";
 import { setModuleConfig } from "./module.js";
+import { GlobalState } from "../core.js";
+
+
+ 
+
+
+export const getActiveModuleConfig = () => {
+  return new GlobalState().getState().ActiveModuleConfig;
+}
 
 export const ModuleConfig = (instance) => {
   const { schema } = instance;
@@ -47,8 +56,18 @@ export const ModuleConfig = (instance) => {
       schema,
     });
 
+ 
+
+    const gs = new GlobalState();
+    gs.put("ActiveModuleConfig", editor, false);
+
+    console.log(new GlobalState().getState())
+
+ 
+
     conf.dialog.title(value.name);
     editor.setValue(value, false);
+    
 
     let _changed = 0;
 
@@ -104,8 +123,12 @@ export const saveModuleStyle = (target) => {
 };
 
 export const getModuleConfig = (target) => {
-  const js = target.querySelector("script[type='settings/json']");
+  let js = target.querySelector("script[type='settings/json']");
 
+  /*if (!js) {
+    const target = target.closest('.component');
+    js = target.querySelector("script[type='settings/json']");
+  }*/
   if (!js) {
     return {};
   } else {

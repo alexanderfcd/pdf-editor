@@ -13,11 +13,13 @@
   transition: box-shadow 0.2s, scale 0.2s;
 }
 
+.ir-mode-edit .component {
+  cursor: grab;
+}
 .component {
   position: absolute;
   overflow: hidden;
   background-color: white;
-  cursor: grab;
 }
 
 .component-content {

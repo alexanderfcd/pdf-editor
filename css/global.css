@@ -7,7 +7,7 @@
 }
 
 body {
-  background-color: #efecec;
+  background-color: #ffffff;
 }
 
 body.ir-dragging .handle,
@@ -53,6 +53,6 @@ body.ir-dragging * {
 @media print {
   @page {
     size: A4;
-    margin: 20mm;
+    margin: 0;
   }
 }

@@ -12,16 +12,16 @@ addEventListener("load", () => {
     renderModule(el);
   });
 
-  $ir.componentHandle.on("unselect", (data) => {
+  $ir.componentHandle?.on("unselect", (data) => {
     globalThis.__moduleConfig.dialog.close();
   });
-  $ir.componentHandle.on("selectStart", (data) => {
+  $ir.componentHandle?.on("selectStart", (data) => {
     const conf = getModuleConfig(data.target);
     const name = conf.name || "";
     getModule(name).edit(data);
   });
 
-  $ir.componentHandle.on("select", (data) => {
+  $ir.componentHandle?.on("select", (data) => {
     const conf = getModuleConfig(data.target);
     const name = conf.name || "";
 

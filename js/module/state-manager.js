@@ -41,6 +41,7 @@ const stateTypes = {
     const node = document.querySelector('[data-id="' + id + '"]');
 
     if (node) {
+
       setModuleConfig(node, value);
       renderModule(node);
     }

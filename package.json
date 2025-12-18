@@ -3,11 +3,14 @@
   "version": "0.0.1",
   "description": "GUI PDF editor",
   "main": "index.js",
+   "type": "module",
   "scripts": {
     "test": "test",
     "build": "webpack --mode=development --config webpack.config.js",
     "prod": "webpack --mode=production --config webpack.config.js",
-    "dev": "webpack  serve --watch --open  --mode=development --config webpack.config.js"
+    "dev": "webpack  serve --watch --open  --mode=development --config webpack.config.js",
+    "pptr": "node url2pdf/run.js",
+    "2pdf": "node url2pdf/2pdf.js"
   },
   "repository": {
     "type": "git",
@@ -35,6 +38,7 @@
   },
   "dependencies": {
     "moveable": "^0.53.0",
+    "puppeteer": "^24.31.0",
     "sortablejs": "^1.15.6",
     "tinymce": "^8.0.1"
   }

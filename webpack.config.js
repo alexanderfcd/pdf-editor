@@ -1,7 +1,6 @@
-var path = require("path");
-var glob = require("glob");
+import { glob } from "glob";
 
-module.exports = {
+export default {
   entry: {
     main: "./index.js",
     libs: "./libs.js",
@@ -14,7 +13,7 @@ module.exports = {
     watchFiles: ["js/**/*", "css/**/*"],
 
     historyApiFallback: true,
-    hot: true,
+    hot: false,
     compress: false,
     static: {
       directory: "./",

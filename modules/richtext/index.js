@@ -1,4 +1,6 @@
 import { TinyMCE } from "../../js/adapters/tinymce.js";
+import { getActiveModuleConfig, getModuleConfig } from "../../js/module/module-config.js";
+import { updateModuleKeyValue } from "../../js/module/module.js";
 
 Editor.addModule({
   name: "text",
@@ -8,7 +10,7 @@ Editor.addModule({
     {
       label: "content",
       props: {
-        type: "hidden",
+        type: "textarea",
       },
 
       name: "content",
@@ -36,6 +38,12 @@ Editor.addModule({
 
     if (!target.editor) {
       target.editor = new TinyMCE(target.querySelector(".component-content"));
+      let component = target.closest(".component");
+      target.editor.on("change", (val) => {
+ 
+
+        getActiveModuleConfig().getByName('content').setValue(val, false)
+      })
     } else {
       await target.editor.focus();
     }

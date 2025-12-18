@@ -216,6 +216,10 @@ export class CreateState extends CreateBase {
     return this.#id;
   }
 
+  put(key, value, dispatch = true) {
+    this.setState(Object.assign({}, this.getState(), {[key]: value}, dispatch));
+  }
+
   setState(state, dispatch = true) {
     this.#state = state;
     if (dispatch) {
@@ -226,12 +230,32 @@ export class CreateState extends CreateBase {
 
 export class RichTextAdapter extends CreateState {}
 
+export class GlobalState extends CreateState {
+  constructor() {
+    super();
+    // todo: investigate this file is 2 two times
+      if (window.GlobalState.instance) {
+          return window.GlobalState.instance;
+      }
+      window.GlobalState.instance = this;
+      this.setState({})
+      
+  }
+
+}
+
+window.GlobalState = GlobalState
+
+
+console.log(1222)
+ 
+
 export default {
   useAwait,
   useFetch,
   useFetchText,
   useFetchJSON,
-
+  GlobalState,
   totalFetch,
   CreateState,
 

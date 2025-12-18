@@ -31,6 +31,10 @@ export class TinyMCE extends RichTextAdapter {
           height: 400,
           content_style: "body { margin: 0%; }",
           setup: (editor) => {
+            editor.on("input ExecCommand", (e) => {
+              const val = editor.getContent();
+              this.dispatch("change", val)
+            })
             editor.on("init", (e) => {
               setTimeout(() => {
                 editor.focus();

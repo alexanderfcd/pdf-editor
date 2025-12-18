@@ -49,6 +49,15 @@ export const getModule = (name) => {
   }
 };
 
+export const updateModuleKeyValue = (target, key, value) => {
+  const conf = {[key]: value};
+  updateModuleConfig(target, conf);
+}
+export const updateModuleConfig = (target, config) => {
+  const conf = getModuleConfig(target);
+  const res = Object.assign({}, conf, config)
+  setModuleConfig(target, res)
+}
 export const setModuleConfig = (target, config) => {
   let js = target.querySelector("script[type='settings/json']");
   if (!js) {
@@ -56,7 +65,6 @@ export const setModuleConfig = (target, config) => {
     js.type = "settings/json";
     target.appendChild(js);
   }
-
   js.textContent = JSON.stringify(config);
 };
 
@@ -68,6 +76,8 @@ export class CreateModule {
     _Modules[this.name] = this;
 
     this.defaults = options.defaults;
+
+    console.log(this.name);
 
     this.editor = ModuleConfig(this);
   }
@@ -105,6 +115,7 @@ export class CreateModule {
   }
 
   setConfig(target, config) {
+   
     return setModuleConfig(target, config);
   }
 

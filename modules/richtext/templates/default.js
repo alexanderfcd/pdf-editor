@@ -4,8 +4,7 @@ Editor.addModuleTemplate("text", {
     const radius = options.radius || 0;
 
     target.innerHTML = `<div>${options.content}</div>`;
-    target.style.borderRadius = `${radius}px`;
-    console.log(radius, target);
+    target.style.borderRadius = `${radius}`;
   },
   css: `
  
