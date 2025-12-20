@@ -3,11 +3,14 @@ Editor.addModuleTemplate("text", {
   render: (target, options) => {
     const radius = options.radius || 0;
 
-    target.innerHTML = `<div>${options.content}</div>`;
+    target.innerHTML = `<div class="wysiwyg-content">${options.content}</div>`;
     target.style.borderRadius = `${radius}`;
   },
   css: `
  
+    $root .wysiwyg-content{
+      width: 100%;
+    }
     $root {
     --gap: 15px;
       margin: var( --gap);
