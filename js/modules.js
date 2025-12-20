@@ -67,7 +67,7 @@ const defaultMenu = [
     content: [
       { $hook: "prependSubmenu" },
       { action: "copy", icon: icon("copy"), label: "Copy" },
-      { action: "copyStyle", icon: icon("copyStyle"), label: "Copy Style" },
+      { action: "copyStyle", icon: icon("copyStyle"), label: "Copy Style11212" },
       { action: "paste", icon: icon("paste"), label: "paste" },
       { action: "clone", icon: icon("clone"), label: "clone" },
       { $hook: "appendSubmenu" },
@@ -102,6 +102,30 @@ const moduleMenu = (node) => {
                 <li data-action="clone">
                     <span>${icon("clone")}</span>
                     <span>Duplicate</span>
+                </li>
+                <li data-action="copyStyle">
+                     <span>${icon("layer")}</span>
+                     <span>Layer</span>
+                     <ul>
+                        <li data-action="moveForward">
+                            <span>${icon("moveForward")}</span>
+                            <span>Move Forward</span>
+                        </li>
+                        <li data-action="bringToFront">
+                            <span>${icon("bringToFront")}</span>
+                            <span>Bring to front</span>
+                        </li>
+                        <li data-action="moveBackward">
+                            <span>${icon("moveBackward")}</span>
+                            <span>Move Backward</span>
+                        </li>
+                        <li data-action="bringToBack">
+                            <span>${icon("bringToBack")}</span>
+                            <span>Bring to back</span>
+                        </li>   
+        
+                        
+                    </ul>
                 </li>
                 
             </ul>
@@ -270,6 +294,26 @@ export const ModulesInit = (instance) => {
 
   $ir.componentHandle = handle;
 
+  $ir.componentHandle.on("moveForward", (target) => {
+    if(target.nextElementSibling){
+      target.nextElementSibling.after(target)
+    }
+  })
+  $ir.componentHandle.on("bringToFront", (target) => {
+ 
+      target.parentElement.append(target)
+   
+  })
+  $ir.componentHandle.on("moveBackward", (target) => {
+    if(target.previousElementSibling){
+      target.previousElementSibling.before(target)
+    }
+  })
+  $ir.componentHandle.on("bringToBack", (target) => {
+ 
+      target.parentElement.prepend(target)
+   
+  })
   $ir.componentHandle.on("clone", (target) => {
     renderModule(TargetMethods.clone(target));
   });

@@ -18,11 +18,12 @@
 }
 
 .handle {
+  --handle-transition: opacity 0.1s, transform 0.1s;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 3001;
-  transition: opacity 0.1s, transform 0.1s;
+  transition: var(--handle-transition);
   opacity: 0;
   visibility: hidden;
   transform: scale(0.9);
@@ -59,6 +60,24 @@
   background-color: #fff;
   border: 2px solid #eee;
   padding: var(--gap);
+}
+.handle ul li ul li ul{
+  right: auto;
+  left: 100%;
+  top: 0;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition:  var(--handle-transition);
+    visibility: hidden;
+  pointer-events: none;
+  display: block;
+}
+.handle ul li ul li:hover > ul{
+ 
+    opacity: 1;
+  transform: translateX(-0);
+    visibility: visible;
+  pointer-events: all;
 }
 .handle li.active > ul {
   display: block;

@@ -10,7 +10,7 @@ Editor.addModule({
     {
       label: "content",
       props: {
-        type: "textarea",
+        type: "hidden",
       },
 
       name: "content",

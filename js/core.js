@@ -233,7 +233,7 @@ export class RichTextAdapter extends CreateState {}
 export class GlobalState extends CreateState {
   constructor() {
     super();
-    // todo: investigate this file is 2 two times
+    // todo: this file is included in index and modules build
       if (window.GlobalState.instance) {
           return window.GlobalState.instance;
       }
