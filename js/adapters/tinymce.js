@@ -34,7 +34,14 @@ export class TinyMCE extends RichTextAdapter {
             editor.on("input ExecCommand", (e) => {
               const val = editor.getContent();
               this.dispatch("change", val)
-            })
+            });
+            // use the undo/redo state from app instance
+            editor.on('BeforeAddUndo', function(e) {
+              return false;
+            });
+            editor.on('BeforeAddRedo', function(e) {
+              return false;
+            });
             editor.on("init", (e) => {
               setTimeout(() => {
                 editor.focus();

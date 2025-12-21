@@ -1,6 +1,6 @@
 import { TinyMCE } from "../../js/adapters/tinymce.js";
 import { getActiveModuleConfig, getModuleConfig } from "../../js/module/module-config.js";
-import { updateModuleKeyValue } from "../../js/module/module.js";
+import { setModuleConfig, updateModuleKeyValue } from "../../js/module/module.js";
 
 Editor.addModule({
   name: "text",
@@ -12,7 +12,6 @@ Editor.addModule({
       props: {
         type: "hidden",
       },
-
       name: "content",
     },
     {
@@ -23,12 +22,11 @@ Editor.addModule({
         max: 200,
         appendix: "px",
       },
-
       name: "radius",
     },
   ],
   onUnSelect: ({ target, event }) => {},
-  onSelect: async ({ target, event }) => {
+  onSelect: async function({ target, event }) {
     if (!event.target.closest(".component-content")) {
       target.classList.remove("editing");
       return;
@@ -39,10 +37,33 @@ Editor.addModule({
     if (!target.editor) {
       target.editor = new TinyMCE(target.querySelector(".component-content"));
       let component = target.closest(".component");
-      target.editor.on("change", (val) => {
- 
 
-        getActiveModuleConfig().getByName('content').setValue(val, false)
+      let _once = false
+ 
+      target.editor.on("change", (val) => {
+
+        const conf = getModuleConfig(component)
+
+        
+        
+        if(!_once) {
+          _once = true;
+          this.root.stateManager.record({
+            type: "settings",
+            value: conf,
+            id: component.dataset.id,
+          })
+        } 
+
+        getActiveModuleConfig().getByName('content').setValue(val, false);
+        setModuleConfig(component, {...conf, content: val})
+        
+
+        this.root.stateManager.record({
+          type: "settings",
+          value: getModuleConfig(component),
+          id:component.dataset.id,
+        })
       })
     } else {
       await target.editor.focus();

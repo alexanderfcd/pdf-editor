@@ -77,8 +77,6 @@ export class CreateModule {
 
     this.defaults = options.defaults;
 
-    console.log(this.name);
-
     this.editor = ModuleConfig(this);
   }
 
@@ -168,7 +166,7 @@ export class CreateModule {
   select({ target, event }) {
     this.target(target);
     if (this.options.onSelect) {
-      this.options.onSelect({ target, event });
+      this.options.onSelect.call(this, { target, event });
     }
   }
 
