@@ -1,3 +1,6 @@
+import { getModuleConfig } from "./module/module-config.js";
+import { updateModuleConfig } from "./module/module.js";
+
 export const initDraggable = (instance, mode = "resize") => {
   const conf = {
     resizable: false,
@@ -68,6 +71,16 @@ export const initDraggable = (instance, mode = "resize") => {
 
     node.parentElement.parentElement.append(moveable.selfElement);
 
+    const updateNewCSSProps = (target, props) => {
+          const comp = getComputedStyle(target);
+        const frag = document.createElement('div');
+        frag.setAttribute('style', getModuleConfig(target).css);
+        for (let prop of props) {
+          frag.style[prop] = comp[prop];
+        }
+        updateModuleConfig(target, {css: frag.getAttribute('style')})
+    }
+
     /* draggable */
     moveable
       .on("dragStart", ({ target, clientX, clientY }) => {
@@ -112,6 +125,7 @@ export const initDraggable = (instance, mode = "resize") => {
         target.classList.remove($ir.prefix("dragging"));
         document.body.classList.remove($ir.prefix("dragging"));
         $ir.componentHandle.position();
+        updateNewCSSProps(target, ['left', 'top'])
         instance.stateManager.record(
           {
             id: target.dataset.id,
@@ -157,6 +171,7 @@ export const initDraggable = (instance, mode = "resize") => {
         target.classList.remove($ir.prefix("resizing"));
         document.body.classList.remove($ir.prefix("resizing"));
         $ir.componentHandle.position();
+        updateNewCSSProps(target, ['width', 'height'])
         instance.stateManager.record(
           {
             id: target.dataset.id,

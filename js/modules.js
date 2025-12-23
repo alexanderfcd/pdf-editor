@@ -5,7 +5,7 @@ import {
   getOwnerId,
   saveModuleStyle,
 } from "./module/module-config.js";
-import { getModule, renderModule } from "./module/module.js";
+import { getModule, renderModule, updateModuleConfig } from "./module/module.js";
 
 addEventListener("load", () => {
   document.querySelectorAll(".component").forEach((el) => {
@@ -67,7 +67,7 @@ const defaultMenu = [
     content: [
       { $hook: "prependSubmenu" },
       { action: "copy", icon: icon("copy"), label: "Copy" },
-      { action: "copyStyle", icon: icon("copyStyle"), label: "Copy Style11212" },
+      { action: "copyStyle", icon: icon("copyStyle"), label: "Copy Style" },
       { action: "paste", icon: icon("paste"), label: "paste" },
       { action: "clone", icon: icon("clone"), label: "clone" },
       { $hook: "appendSubmenu" },
@@ -95,15 +95,23 @@ const moduleMenu = (node) => {
                      <span>${icon("copyStyle")}</span>
                      <span>Copy style</span>
                 </li>
+
+                
+
+                
                 <li data-action="paste">
                      <span>${icon("paste")}</span>
                      <span>Paste</span>
+                </li>
+                <li data-action="pasteStyle">
+                     <span>${icon("pasteStyle")}</span>
+                     <span>Paste style</span>
                 </li>
                 <li data-action="clone">
                     <span>${icon("clone")}</span>
                     <span>Duplicate</span>
                 </li>
-                <li data-action="copyStyle">
+                <li>
                      <span>${icon("layer")}</span>
                      <span>Layer</span>
                      <ul>
@@ -293,6 +301,74 @@ export const ModulesInit = (instance) => {
   const handle = new Handle();
 
   $ir.componentHandle = handle;
+
+  $ir.componentHandle.on("copy", (target) => {
+     navigator.clipboard.writeText(JSON.stringify(getModuleConfig(target)))
+  })
+  $ir.componentHandle.on("copyStyle", (target) => {
+    console.log(getModuleConfig(target))
+     navigator.clipboard.writeText(getModuleConfig(target).css)
+  });
+
+  $ir.componentHandle.on("pasteStyle", async (target) => {
+    const text = await navigator.clipboard.readText();
+    console.log(text, target)
+      updateModuleConfig(target, {css: text});
+      renderModule(target)
+  });
+
+  const handlePaste = async (layout) => {
+    const text = await navigator.clipboard.readText();
+
+  
+ 
+     let json;
+     try {
+      json = JSON.parse(text);
+    
+ 
+      const newNode = $("div", {
+        className: `component`,
+        content: `
+          <script type="settings/json">
+            ${JSON.stringify(json)}
+          </script>`,
+      });
+
+      layout.append(newNode)
+
+
+      
+     
+ 
+      renderModule(newNode);
+
+      const css = getComputedStyle(newNode);
+      const eleft = (parseFloat(css.left) + 20) + 'px';
+      const etop = (parseFloat(css.top) + 20) + 'px'
+      newNode.style.left = eleft 
+      newNode.style.top = etop
+
+      updateModuleConfig(newNode, {left: eleft, top: etop })
+
+     } catch(e) {
+      console.log(e)
+     }
+  }
+
+  addEventListener('paste', (e) => {
+ 
+    const layout = e.target.closest('.section-content');
+    if(layout) {
+      handlePaste(layout)
+    }
+    
+  })
+
+  $ir.componentHandle.on("paste", async (target) => {
+    const layout = target.closest('.section-content');
+    handlePaste(layout)
+  })  
 
   $ir.componentHandle.on("moveForward", (target) => {
     if(target.nextElementSibling){

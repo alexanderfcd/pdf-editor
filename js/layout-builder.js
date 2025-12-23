@@ -142,6 +142,7 @@ class LayoutBuilderService extends CreateBase {
       target.querySelector(".section-content").getAttribute("style")
     );
     clone.dataset.id = $ir.id();
+ 
     target.after(clone);
 
     target.querySelectorAll(".component").forEach((e) => {
