@@ -294,6 +294,18 @@
   overflow: auto;
   display: none;
 }
+.template-preview-option{
+  img,svg{
+    object-fit: contain;
+    max-width: 100%;
+    object-fit: contain;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+  }
+}
 
 .g-input-block-file-block
   .g-input-block-file:first-child
@@ -424,6 +436,118 @@
   background-color: #8888884f;
   transition: 0.3s;
 }
+
+.ir-layout-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ir-layout-category {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ca3af;
+  padding: 12px 0 4px;
+}
+
+.ir-layout-category:first-child {
+  padding-top: 0;
+}
+
+.ir-list-layouts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.ir-list-layouts li {
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius);
+  padding: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.ir-list-layouts li:hover {
+  border-color: #9ca3af;
+  background-color: #f9fafb;
+}
+
+.ir-list-layouts .layout-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.ir-list-layouts .layout-description {
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+/* repeater */
+.g-input-block-type-repeater label {
+  display: block;
+  margin-bottom: 4px;
+}
+.g-repeater-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+.g-repeater-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.g-repeater-row input[type="text"],
+.g-repeater-row input[type="number"] {
+  flex: 1;
+  min-width: 0;
+  height: var(--ir-field-height);
+  border: 1px solid #00000026;
+  border-radius: 4px;
+  padding: 0 8px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  outline: none;
+  font-family: inherit;
+}
+.g-repeater-row input[type="text"]:focus,
+.g-repeater-row input[type="number"]:focus {
+  border-color: #aaa;
+}
+.g-repeater-row input[type="color"] {
+  width: 32px;
+  height: var(--ir-field-height);
+  border: 1px solid #00000026;
+  border-radius: 4px;
+  padding: 2px 3px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+.g-repeater-delete {
+  flex-shrink: 0;
+  padding: 0 6px !important;
+  height: var(--ir-field-height) !important;
+}
+.g-repeater-delete svg {
+  width: 16px !important;
+}
+.g-repeater-add {
+  width: 100%;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.g-repeater-add svg {
+  width: 16px !important;
+}
+/* /repeater */
 
 /*layers*/
 .ir-layer-layout .ir-layer-name {

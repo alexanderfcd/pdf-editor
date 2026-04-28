@@ -1,34 +1,36 @@
- <!DOCTYPE html>
- <html lang="en">
- <head>
-     <meta charset="utf-8">
-     <title>PDF editor</title>
-     <meta name="viewport" content="width=device-width, initial-scale=1">
-     <meta name="author" content="">
-     <link rel="stylesheet" href="./css/core.css">
-     <link rel="stylesheet" href="./css/style.css">
-     <link rel="stylesheet" href="colorpicker/colorpicker.css">
- </head>
- <body>
-     <div class="container">
-         <div class="layout-holder">
-             <div class="sections">
-                 <div class="section" data-id="page-x">
-                     <div class="section-content">
-                         <div class="component">
-                             <script type="settings/json">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>PDF editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="./css/core.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="colorpicker/colorpicker.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="layout-holder">
+            <div class="sections">
+                <div class="section" data-id="page-x">
+                    <div class="section-content">
+                        <div class="component">
+                            <script type="settings/json">
                                  {
                                     "name": "image",
-                                    "template": "default",
+                                    "template": "circle",
                                     "radius": "0",
                                     "file": "https://placehold.co/600x400/EEE/31343C",
                                     "css": "height:300px;width:100%"
                                 }
                             </script>
-                         </div>
-  
-                         <div class="component text">
-                             <script type="settings/json">
+                        </div>
+
+                        <div class="component text">
+                            <script type="settings/json">
                                  {
                                     "name": "text",
                                     "template": "default",
@@ -37,55 +39,12 @@
                                     "inlineEditable": true
                                 }
                             </script>
-                         </div>
-                         <div class="component">
-                             <script type="settings/json">
+                        </div>
+                        <div class="component">
+                            <script type="settings/json">
                                  {
                                     "name": "gallery",
-                                    "template": "default",
-                                    "files": [
-                                        "https://placehold.co/600x400/EEE/31343C",
-                                        "https://placehold.co/600x400/EEE/31343C",
-                                        "https://placehold.co/600x400/EEE/31343C"
-                                        
-                                    ],
-                                    "columns": 3,
-                                    "gap": 1,
-                                   
-                                    "css": "height: 200px;width: 100%;top:370px;left:0"
-                                }
-                            </script>
-                         </div>
-                     </div>
-                 </div><div class="section" data-id="page-x">
-                     <div class="section-content">
-                         <div class="component">
-                             <script type="settings/json">
-                                 {
-                                    "name": "image",
-                                    "template": "default",
-                                    "radius": "0",
-                                    "file": "https://placehold.co/600x400/EEE/31343C",
-                                    "css": "height:300px;width:100%"
-                                }
-                            </script>
-                         </div>
-                         <div class="component text">
-                             <script type="settings/json">
-                                 {
-                                    "name": "text",
-                                    "template": "default",
-                                    "content": "<h3>Producer, Vocalist, Composer Lyricist: Lana Del Rey</h3>",
-                                    "css": "width: 80%;left: 10%;text-align: center;top: 310px",
-                                    "inlineEditable": true
-                                }
-                            </script>
-                         </div>
-                         <div class="component">
-                             <script type="settings/json">
-                                 {
-                                    "name": "gallery",
-                                    "template": "default",
+                                    "template": "hexagon",
                                     "files": [
                                         "https://placehold.co/600x400/EEE/31343C",
                                         "https://placehold.co/600x400/EEE/31343C",
@@ -98,46 +57,116 @@
                                     "css": "height: 200px;width: 100%;top:370px;left:0"
                                 }
                             </script>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-             <div class="ctrlboxes"></div>
-         </div>
-     </div>
-     <script src="./dist/libs.js"></script>
-     <script src="./dist/main.js"></script>
-     <script src="./dist/modules.js"></script>
-     <script>
-         addEventListener('DOMContentLoaded', () => {
+                        </div>
+                        <div class="component">
+                            <script type="settings/json">
+                                 {
+                                    "name": "shape",
+                                    "template": "hexagon",
+                                    "fill": "#7C3AED",
+                                    "stroke": "#111827",
+                                    "strokeWidth": 2,
+                                    "opacity": 0.95,
+                                    "css": "width:180px;height:180px;left:40px;top:40px"
+                                }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+                <div class="section" data-id="page-x">
+                    <div class="section-content">
+                        <div class="component">
+                            <script type="settings/json">
+                                 {
+                                    "name": "image",
+                                    "template": "diamond",
+                                    "radius": "0",
+                                    "file": "https://placehold.co/600x400/EEE/31343C",
+                                    "css": "height:300px;width:100%"
+                                }
+                            </script>
+                        </div>
+                        <div class="component text">
+                            <script type="settings/json">
+                                 {
+                                    "name": "text",
+                                    "template": "default",
+                                    "content": "<h3>Producer, Vocalist, Composer Lyricist: Lana Del Rey</h3>",
+                                    "css": "width: 80%;left: 10%;text-align: center;top: 310px",
+                                    "inlineEditable": true
+                                }
+                            </script>
+                        </div>
+                        <div class="component">
+                            <script type="settings/json">
+                                 {
+                                    "name": "gallery",
+                                    "template": "hexagon",
+                                    "files": [
+                                        "https://placehold.co/600x400/EEE/31343C",
+                                        "https://placehold.co/600x400/EEE/31343C",
+                                        "https://placehold.co/600x400/EEE/31343C"
+                                        
+                                    ],
+                                    "columns": 3,
+                                    "gap": 1,
+                                    
+                                    "css": "height: 200px;width: 100%;top:370px;left:0"
+                                }
+                            </script>
+                        </div>
+                        <div class="component">
+                            <script type="settings/json">
+                                 {
+                                    "name": "shape",
+                                    "template": "hexagon",
+                                    "fill": "#7C3AED",
+                                    "stroke": "#111827",
+                                    "strokeWidth": 2,
+                                    "opacity": 0.95,
+                                    "css": "width:180px;height:180px;left:40px;top:40px"
+                                }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ctrlboxes"></div>
+        </div>
+    </div>
+    <script src="./dist/libs.js"></script>
+    <script src="./dist/main.js"></script>
+    <script src="./dist/modules.js"></script>
+    <script>
+        addEventListener('DOMContentLoaded', () => {
             let action = PDFPreview;
-            if(location.href.includes('edit')) {
+            if (location.href.includes('edit')) {
                 action = Editor
             }
-             window.pdfEditor = new action({
-             // window.pdfEditor = new PDFPreview({
-             //window.pdfEditor = new Editor({
-                 editor: document.querySelector('#editor'),
-                 sections: document.querySelector('.sections'),
-                 data: [
+            window.pdfEditor = new action({
+                // window.pdfEditor = new PDFPreview({
+                //window.pdfEditor = new Editor({
+                editor: document.querySelector('#editor'),
+                sections: document.querySelector('.sections'),
+                data: [
                     {
                         id: 'hero-section',
                         components: [
-                        {
-                            "name": "text",
-                            "template": "default",
-                            "content": "<h3>Black window, Vocalist, Composer Lyricist: Lana Del Rey1</h3>",
-                            "css": "width: 80%;left: 10%;text-align: center;top: 310px",
-                            "inlineEditable": true
-                        },
-                        {
-                            "name": "image",
-                            "template": "default",
-                            "radius": "0",
-                            "file": "https://placehold.co/600x400/EEE/31343C",
-                            "css": "height:300px;width:100%"
-                        }
-                    ],
+                            {
+                                "name": "text",
+                                "template": "default",
+                                "content": "<h3>Black window, Vocalist, Composer Lyricist: Lana Del Rey1</h3>",
+                                "css": "width: 80%;left: 10%;text-align: center;top: 310px",
+                                "inlineEditable": true
+                            },
+                            {
+                                "name": "image",
+                                "template": "diamond",
+                                "radius": "0",
+                                "file": "https://placehold.co/600x400/EEE/31343C",
+                                "css": "height:300px;width:100%"
+                            }
+                        ],
                     },
                     [
                         {
@@ -155,10 +184,11 @@
                             "css": "height:300px;width:100%"
                         }
                     ]
-                 ]
-             });
-             window.pdfEditor.on('ready', ()=>alert(1))
+                ]
+            });
+            window.pdfEditor.on('ready', () => alert(1))
         });
-     </script>
- </body>
- </html>
+    </script>
+</body>
+
+</html>

@@ -24,6 +24,28 @@ Editor.addModule({
       },
       name: "radius",
     },
+    {
+      label: "Vertical align",
+      type: "btnMenu",
+      options: [
+        {
+          value: "flex-start",
+          label: "Top",
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 11h3v10h2V11h3l-4-4-4 4zM4 3v2h16V3H4z"/></svg>`,
+        },
+        {
+          value: "center",
+          label: "Center",
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 19h3v4h2v-4h3l-4-4-4 4zm8-14h-3V1h-2v4H8l4 4 4-4zM4 11v2h16v-2H4z"/></svg>`,
+        },
+        {
+          value: "flex-end",
+          label: "Bottom",
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 13h-3V3h-2v10H8l4 4 4-4zM4 19v2h16v-2H4z"/></svg>`,
+        },
+      ],
+      name: "verticalAlign",
+    },
   ],
   onUnSelect: ({ target, event }) => {},
   onSelect: async function({ target, event }) {

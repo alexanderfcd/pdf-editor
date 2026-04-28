@@ -137,6 +137,8 @@ const DecorateField = (instance) => {
   const props = instance.props;
 
   for (let i in props) {
+    if (i === "options") continue;
+    if (i === "type" && node.nodeName === "SELECT") continue;
     node[i] = typeof props[i] === "function" ? props[i].bind(node) : props[i];
   }
 
@@ -157,9 +159,19 @@ class InputField extends CreateState {
   #field;
   constructor(props, validate) {
     super();
-    let nodeName = "input";
+    let nodeName = props.type === "select" ? "select" : "input";
 
     this.#field = $(nodeName, { id: `node-${$ir.id()}` });
+
+    if (props.type === "select" && props.options) {
+      props.options.forEach((opt) => {
+        const option = document.createElement("option");
+        option.value = opt.value;
+        option.textContent = opt.label;
+        this.#field.appendChild(option);
+      });
+    }
+
     this.validate = validate;
     this.props = props;
     this.init();
@@ -190,7 +202,9 @@ class InputField extends CreateState {
         this.setValue(val);
       }
 
-      this.#field.value = "";
+      if (this.#field.type === "file") {
+        this.#field.value = "";
+      }
     });
   }
 
@@ -395,6 +409,167 @@ class PreviewSelect extends CreateState {
   }
 }
 
+class BtnMenuBlock extends CreateState {
+  constructor(label, options = []) {
+    super();
+    this.label = label;
+    this.options = options;
+    this.init();
+  }
+
+  setValue(value, trigger = true) {
+    if (trigger) {
+      this.dispatch("beforeChange", { value });
+    }
+    this.setState(value, trigger);
+    this.setUIValue(value);
+  }
+
+  setUIValue(value) {
+    this.buttons.forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.value === value);
+    });
+  }
+
+  set value(value) {
+    this.setValue(value, true);
+  }
+
+  get value() {
+    return this.getState();
+  }
+
+  init() {
+    this.label = $("label", { content: document.createTextNode(this.label) });
+    const menu = document.createElement("nav");
+    menu.className = "ir-btn-menu";
+
+    this.buttons = this.options.map((opt) => {
+      const btn = document.createElement("button");
+      btn.className = "ir-btn ir-btn-outline";
+      btn.dataset.value = opt.value;
+      btn.title = opt.label;
+      btn.innerHTML = opt.icon;
+      btn.addEventListener("click", () => {
+        this.value = opt.value;
+      });
+      menu.appendChild(btn);
+      return btn;
+    });
+
+    this.block = $("div", {
+      className: "g-input-block",
+      content: [this.label, menu],
+    });
+  }
+}
+
+class RepeaterBlock extends CreateState {
+  constructor(label, fieldDefs = []) {
+    super();
+    this._label = label;
+    this.fieldDefs = fieldDefs;
+    this.init();
+  }
+
+  setValue(value, trigger = true) {
+    if (trigger) this.dispatch("beforeChange", { value });
+    this.setState(value, trigger);
+    this.renderRows(value);
+  }
+
+  // Update state without re-rendering rows (preserves input focus while typing)
+  _inputChanged(value) {
+    this.dispatch("beforeChange", { value });
+    this.setState(value, true);
+  }
+
+  set value(v) { this.setValue(v, true); }
+  get value() { return this.getState(); }
+
+  renderRows(items) {
+    this.rowsContainer.innerHTML = "";
+    (items || []).forEach((item, idx) => {
+      this.rowsContainer.appendChild(this._createRow(item, idx));
+    });
+  }
+
+  _createRow(item, idx) {
+    const row = document.createElement("div");
+    row.className = "g-repeater-row";
+
+    this.fieldDefs.forEach((field) => {
+      let input = document.createElement("input");
+      if (field.type === "color") {
+        input.type = "color";
+        input.value = item[field.name] || "#4e79a7";
+        input.title = field.label;
+        input.addEventListener("input", () => {
+          const current = [...(this.getState() || [])];
+          current[idx] = { ...current[idx], [field.name]: input.value };
+          this._inputChanged(current);
+        });
+      } else if (field.type === "number") {
+        input.type = "number";
+        input.value = item[field.name] ?? "";
+        input.placeholder = field.label;
+        input.addEventListener("input", () => {
+          const current = [...(this.getState() || [])];
+          const v = parseFloat(input.value);
+          current[idx] = { ...current[idx], [field.name]: isNaN(v) ? 0 : v };
+          this._inputChanged(current);
+        });
+      } else {
+        input.type = "text";
+        input.value = item[field.name] ?? "";
+        input.placeholder = field.label;
+        input.addEventListener("input", () => {
+          const current = [...(this.getState() || [])];
+          current[idx] = { ...current[idx], [field.name]: input.value };
+          this._inputChanged(current);
+        });
+      }
+      row.appendChild(input);
+    });
+
+    const del = document.createElement("button");
+    del.className = "ir-btn ir-btn-outline g-repeater-delete";
+    del.title = "Remove";
+    del.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
+    del.addEventListener("click", () => {
+      const current = (this.getState() || []).filter((_, i) => i !== idx);
+      this.setValue(current);
+    });
+    row.appendChild(del);
+
+    return row;
+  }
+
+  init() {
+    this.label = $("label", { content: document.createTextNode(this._label) });
+
+    this.rowsContainer = document.createElement("div");
+    this.rowsContainer.className = "g-repeater-rows";
+
+    const addBtn = document.createElement("button");
+    addBtn.className = "ir-btn ir-btn-outline g-repeater-add";
+    addBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Add item`;
+    addBtn.addEventListener("click", () => {
+      const current = [...(this.getState() || [])];
+      const empty = {};
+      this.fieldDefs.forEach((f) => {
+        empty[f.name] = f.type === "color" ? "#4e79a7" : f.type === "number" ? 0 : "";
+      });
+      this.setValue([...current, empty]);
+    });
+
+    this.block = $("div", {
+      className: "g-input-block g-input-block-type-repeater",
+      content: [this.label, this.rowsContainer, addBtn],
+    });
+  }
+}
+
 export const fields = [
   {
     label: "Top",
@@ -441,6 +616,10 @@ export class GUIEditor extends CreateState {
 
     if (obj.type === "previewSelect") {
       block = new PreviewSelect(obj.label, obj.options);
+    } else if (obj.type === "btnMenu") {
+      block = new BtnMenuBlock(obj.label, obj.options);
+    } else if (obj.type === "repeater") {
+      block = new RepeaterBlock(obj.label, obj.fields);
     } else {
       block = new InputBlock(obj.label, obj.props, obj.validate);
     }

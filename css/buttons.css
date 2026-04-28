@@ -71,3 +71,8 @@
 .ir-btn svg {
   width: 22px;
 }
+
+.ir-btn-menu .ir-btn.active {
+  background-color: #e8e8e8;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+}

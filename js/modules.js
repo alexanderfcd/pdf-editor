@@ -312,8 +312,9 @@ export const ModulesInit = (instance) => {
 
   $ir.componentHandle.on("pasteStyle", async (target) => {
     const text = await navigator.clipboard.readText();
-    console.log(text, target)
-      updateModuleConfig(target, {css: text});
+   
+    const css = text.split(';').map(o=>o.trim()).filter(o=>  o.indexOf('left') !== 0 && o.indexOf('top') ).join(';')
+      updateModuleConfig(target, {css});
       renderModule(target)
   });
 
@@ -396,6 +397,7 @@ export const ModulesInit = (instance) => {
 
   $ir.componentHandle.on("delete", (target) => {
     saveModuleStyle(target);
+    console.log(target)
 
     instance.stateManager.record({
       type: "deletion",
@@ -421,4 +423,13 @@ export const ModulesInit = (instance) => {
 
   document.body.addEventListener("mousedown", mdHandle);
   document.body.addEventListener("touchstart", mdHandle);
+  document.body.addEventListener("keydown", e => {
+    if(e.keyCode == 46) {
+        const target  = handle.target();
+        if(target) {
+          $ir.componentHandle.dispatch('delete', target)
+        }
+         
+    }
+  });
 };

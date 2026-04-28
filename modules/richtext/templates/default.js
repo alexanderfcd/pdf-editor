@@ -2,9 +2,11 @@ Editor.addModuleTemplate("text", {
   name: "default",
   render: (target, options) => {
     const radius = options.radius || 0;
+    const verticalAlign = options.verticalAlign || "center";
 
     target.innerHTML = `<div class="wysiwyg-content">${options.content}</div>`;
     target.style.borderRadius = `${radius}`;
+    target.style.alignItems = verticalAlign;
   },
   css: `
  

@@ -347,6 +347,19 @@ export class Editor extends Preview {
         });
       }
     });
+    this.on('moduleInserted', data=> {
+      initDraggable(this)
+      this.selectedNode(data.module);
+      this.activeNode(data.module);
+     if (this.activeNode().moveable) {
+          this.activeNode().moveable.updateRect();
+          this.activeNode().moveable.selfElement.style.display = "";
+        }
+      $ir.componentHandle.dispatch("selectStart", {
+        target: data.module,
+        event: { target: data.module },
+      });
+    })
   }
 
   mount() {

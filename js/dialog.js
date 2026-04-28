@@ -321,7 +321,12 @@ export class ModuleDialog extends CDialog {
     this.build();
     this.title("Insert module");
     this.displayModules();
+    this.on('close', () => {
+      this.#resolve(null)
+    })
   }
+
+  
 
   displayModules() {
     const list = $(`<ul  class="${$ir.prefix("list-modules")}" />`);
@@ -341,9 +346,7 @@ export class ModuleDialog extends CDialog {
       const li = e.target.closest("li");
       if (li) {
         this.dispatch("moduleSelected", li.__module);
-        this.#resolvers.forEach((resolve) => resolve(li.__module));
-        this.#resolvers = [];
-        this.#rejects = [];
+        this.#resolve(li.__module)
         this.dialog.remove();
       }
     });
@@ -362,9 +365,181 @@ export class ModuleDialog extends CDialog {
   }
 
   #resolvers = [];
-  #rejects = [];
+  #resolve(module) {
+        this.#resolvers.forEach((resolve) => resolve(module));
+        this.#resolvers = [];
+  }
+
   promise() {
     return new Promise((resolve, reject) => {
+      this.#resolvers.push(resolve);
+    });
+  }
+}
+
+export class LayoutDialog extends CDialog {
+  constructor(options = {}) {
+    super();
+
+    this.settings = Object.assign({}, this.#defaults(), options);
+    this.layouts = Array.isArray(options.layouts) ? options.layouts : [];
+
+    this.build();
+    this.title("Insert layout");
+    this.displayLayouts();
+    this.on("close", () => {
+      this.#resolve(null);
+    });
+  }
+
+  displayLayouts() {
+    const container = $(`<div class="${$ir.prefix("layout-dialog-body")}" />`);
+
+    const grouped = {};
+    const order = [];
+    this.layouts.forEach((layout) => {
+      const cat = layout.category || "General";
+      if (!grouped[cat]) {
+        grouped[cat] = [];
+        order.push(cat);
+      }
+      grouped[cat].push(layout);
+    });
+
+    order.forEach((cat) => {
+      const heading = $(`<div class="${$ir.prefix("layout-category")}">${cat}</div>`);
+      container.appendChild(heading);
+
+      const list = $(`<ul class="${$ir.prefix("list-layouts")}" />`);
+      grouped[cat].forEach((layout) => {
+        const li = $(
+          `<li data-layout="${layout.id}">
+            <div class="layout-title">${layout.title}</div>
+            <div class="layout-description">${layout.description || ""}</div>
+          </li>`
+        );
+        li.__layout = layout;
+        list.appendChild(li);
+      });
+      container.appendChild(list);
+    });
+
+    this.content(container);
+
+    this.dialog.content.querySelector(`.${$ir.prefix("layout-dialog-body")}`).addEventListener("click", (e) => {
+      const li = e.target.closest("li");
+      if (li) {
+        this.dispatch("layoutSelected", li.__layout);
+        this.#resolve(li.__layout);
+        this.dialog.remove();
+      }
+    });
+  }
+
+  #defaults() {
+    return {
+      width: "500px",
+      mode: "modal",
+      footer: false,
+      header: true,
+      content: ``,
+      closeAction: "remove",
+      overlay: true,
+    };
+  }
+
+  #resolvers = [];
+  #resolve(layout) {
+    this.#resolvers.forEach((resolve) => resolve(layout));
+    this.#resolvers = [];
+  }
+
+  promise() {
+    return new Promise((resolve) => {
+      this.#resolvers.push(resolve);
+    });
+  }
+}
+
+export class PageTemplateDialog extends CDialog {
+  constructor(options = {}) {
+    super();
+    this.settings = Object.assign({}, this.#defaults(), options);
+    this.templates = Array.isArray(options.templates) ? options.templates : [];
+    this.build();
+    this.title("Insert page");
+    this.displayTemplates();
+    this.on("close", () => {
+      this.#resolve(null);
+    });
+  }
+
+  displayTemplates() {
+    const container = $(`<div class="${$ir.prefix("layout-dialog-body")}" />`);
+
+    const grouped = {};
+    const order = [];
+    this.templates.forEach((tpl) => {
+      const cat = tpl.category || "General";
+      if (!grouped[cat]) {
+        grouped[cat] = [];
+        order.push(cat);
+      }
+      grouped[cat].push(tpl);
+    });
+
+    order.forEach((cat) => {
+      const heading = $(`<div class="${$ir.prefix("layout-category")}">${cat}</div>`);
+      container.appendChild(heading);
+
+      const list = $(`<ul class="${$ir.prefix("list-layouts")}" />`);
+      grouped[cat].forEach((tpl) => {
+        const li = $(
+          `<li data-tpl="${tpl.id}">
+            <div class="layout-title">${tpl.title}</div>
+            <div class="layout-description">${tpl.description || ""}</div>
+          </li>`
+        );
+        li.__tpl = tpl;
+        list.appendChild(li);
+      });
+      container.appendChild(list);
+    });
+
+    this.content(container);
+
+    this.dialog.content
+      .querySelector(`.${$ir.prefix("layout-dialog-body")}`)
+      .addEventListener("click", (e) => {
+        const li = e.target.closest("li");
+        if (li) {
+          this.dispatch("templateSelected", li.__tpl);
+          this.#resolve(li.__tpl);
+          this.dialog.remove();
+        }
+      });
+  }
+
+  #defaults() {
+    return {
+      width: "500px",
+      mode: "modal",
+      footer: false,
+      header: true,
+      content: ``,
+      closeAction: "remove",
+      overlay: true,
+    };
+  }
+
+  #resolvers = [];
+  #resolve(tpl) {
+    this.#resolvers.forEach((resolve) => resolve(tpl));
+    this.#resolvers = [];
+  }
+
+  promise() {
+    return new Promise((resolve) => {
       this.#resolvers.push(resolve);
     });
   }
