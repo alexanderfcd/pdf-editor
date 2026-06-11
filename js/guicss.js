@@ -89,6 +89,7 @@ const DecorateNumber = (instance) => {
     type: "range",
     min: instance.props.min,
     max: instance.props.max,
+    step: instance.props.step || 1,
   });
   slider.addEventListener("input", () => {
     instance.setValue(slider.value);
@@ -591,14 +592,14 @@ export const fields = [
     props: { min: 20, max: 2000, type: "number", appendix: "px" },
     name: "height",
   },
-  {
+  /*{
     label: "Padding",
     props: { min: 0, max: 200, type: "number", appendix: "px" },
     name: "padding",
     prop: "padding",
   },
 
-  { label: "Background", props: { type: "color" }, name: "backgroundColor" },
+   { label: "Background", props: { type: "color" }, name: "backgroundColor" },*/
 ];
 
 export class GUIEditor extends CreateState {

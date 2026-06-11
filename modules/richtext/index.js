@@ -16,6 +16,7 @@ Editor.addModule({
     },
     {
       label: "Radius",
+      propType: "style",
       props: {
         type: "number",
         min: 0,
@@ -27,6 +28,7 @@ Editor.addModule({
     {
       label: "Vertical align",
       type: "btnMenu",
+      propType: "style",
       options: [
         {
           value: "flex-start",

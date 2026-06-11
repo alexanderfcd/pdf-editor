@@ -626,8 +626,27 @@ class LayoutBuilderService extends CreateBase {
     this.root.dispatch('moduleInserted', {module, target})
   }
 
+  _renderLayoutPreview(layout) {
+    const page = document.createElement("div");
+    page.style.cssText =
+      "width:8.27in;height:11.69in;position:relative;background:#fff;overflow:hidden;";
+    (layout.components || []).forEach((item) => {
+      try {
+        const module = createModule(item.config, item.css);
+        page.appendChild(module);
+        renderModule(module);
+      } catch (e) {
+        // skip components that fail in preview context
+      }
+    });
+    return page;
+  }
+
   async addLayout(target) {
-    const dlg = new LayoutDialog({ layouts: SECTION_LAYOUTS });
+    const dlg = new LayoutDialog({
+      layouts: SECTION_LAYOUTS,
+      renderPreview: (layout) => this._renderLayoutPreview(layout),
+    });
     const selectedLayout = await dlg.promise();
     if (!selectedLayout) {
       return;
@@ -860,7 +879,10 @@ class LayoutBuilderService extends CreateBase {
   }
 
   async insertPage(afterSection) {
-    const dlg = new PageTemplateDialog({ templates: PAGE_TEMPLATES });
+    const dlg = new PageTemplateDialog({
+      templates: PAGE_TEMPLATES,
+      renderPreview: (tpl) => this._renderLayoutPreview(tpl),
+    });
     const selected = await dlg.promise();
     if (!selected) return;
 

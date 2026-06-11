@@ -359,6 +359,19 @@
   height: 100%;
 }
 
+/* Constrain modal dialogs to the viewport */
+.dialog-modal {
+  max-height: 90vh;
+  display: flex !important;
+  flex-direction: column;
+}
+
+.dialog-modal .dialog-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  max-height: calc(90vh - var(--header-height, 70px));
+}
+
 [contenteditable] {
   outline: none;
 }
@@ -456,6 +469,71 @@
   padding-top: 0;
 }
 
+/* ── Layout visual preview grid ─────────────────────── */
+.ir-layout-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.ir-layout-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 5px;
+  transition: background-color 0.15s;
+}
+
+.ir-layout-card:hover {
+  background-color: #f5f3ff;
+}
+
+.ir-layout-preview-wrap {
+  width: 152px;
+  height: 214px;
+  overflow: hidden;
+  position: relative;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 4px;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  flex-shrink: 0;
+}
+
+.ir-layout-card:hover .ir-layout-preview-wrap {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px #ede9fe;
+}
+
+/* Scale an A4 section (8.27in × 11.69in = ~794 × 1122px) down to 152 × 214px
+   Scale ≈ 152 / 794 = 0.1914 */
+.ir-layout-preview-page {
+  width: 8.27in;
+  height: 11.69in;
+  position: relative;
+  transform: scale(0.1914);
+  transform-origin: top left;
+  background: #fff;
+}
+
+.ir-layout-preview-block {
+  box-sizing: border-box;
+}
+
+.ir-layout-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  text-align: center;
+  line-height: 1.3;
+  max-width: 152px;
+}
+
+/* Legacy flat list (kept for PageTemplateDialog) */
 .ir-list-layouts {
   display: grid;
   grid-template-columns: 1fr;

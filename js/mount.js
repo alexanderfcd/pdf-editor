@@ -185,8 +185,6 @@ export class Editor extends Preview {
 
         this.activeNode().moveable.updateRect();
 
-        console.log(data);
-
         let immediate =
           this.activeNode().dataset.id !==
           this.stateManager.state.state()[0].id;

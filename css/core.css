@@ -146,6 +146,12 @@
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.18s;
+  .section-insert-btn-inner{
+    top: 0;
+  }
+  &::before{
+    top: 0;
+  }
 }
 
 .ir-mode-edit .section-insert-btn-start::before {

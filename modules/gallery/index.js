@@ -13,6 +13,7 @@ Editor.addModule({
     },
     {
       label: "Number of columns",
+      propType: "style",
       props: {
         type: "number",
         min: 1,
@@ -24,6 +25,7 @@ Editor.addModule({
 
     {
       label: "Gap",
+      propType: "style",
       props: {
         type: "number",
         min: 0,

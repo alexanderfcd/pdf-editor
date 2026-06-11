@@ -6,21 +6,25 @@ Editor.addModule({
       label: "Fill",
       props: { type: "color" },
       name: "fill",
+      propType: "style",
     },
     {
       label: "Stroke",
       props: { type: "color" },
       name: "stroke",
+      propType: "style",
     },
     {
       label: "Stroke Width",
       props: { type: "number", min: 0, max: 20, appendix: "px" },
       name: "strokeWidth",
+      propType: "style",
     },
     {
       label: "Opacity",
       props: { type: "number", min: 0, max: 1, step: 0.1 },
       name: "opacity",
+      propType: "style",
     },
   ],
   defaults: {

@@ -383,6 +383,7 @@ export class LayoutDialog extends CDialog {
 
     this.settings = Object.assign({}, this.#defaults(), options);
     this.layouts = Array.isArray(options.layouts) ? options.layouts : [];
+    this.renderPreview = options.renderPreview || null;
 
     this.build();
     this.title("Insert layout");
@@ -399,46 +400,86 @@ export class LayoutDialog extends CDialog {
     const order = [];
     this.layouts.forEach((layout) => {
       const cat = layout.category || "General";
-      if (!grouped[cat]) {
-        grouped[cat] = [];
-        order.push(cat);
-      }
+      if (!grouped[cat]) { grouped[cat] = []; order.push(cat); }
       grouped[cat].push(layout);
     });
 
     order.forEach((cat) => {
-      const heading = $(`<div class="${$ir.prefix("layout-category")}">${cat}</div>`);
-      container.appendChild(heading);
-
-      const list = $(`<ul class="${$ir.prefix("list-layouts")}" />`);
-      grouped[cat].forEach((layout) => {
-        const li = $(
-          `<li data-layout="${layout.id}">
-            <div class="layout-title">${layout.title}</div>
-            <div class="layout-description">${layout.description || ""}</div>
-          </li>`
-        );
-        li.__layout = layout;
-        list.appendChild(li);
-      });
-      container.appendChild(list);
+      container.appendChild($(`<div class="${$ir.prefix("layout-category")}">${cat}</div>`));
+      const grid = $(`<div class="${$ir.prefix("layout-preview-grid")}" />`);
+      grouped[cat].forEach((layout) => grid.appendChild(this._buildPreviewCard(layout)));
+      container.appendChild(grid);
     });
 
     this.content(container);
 
-    this.dialog.content.querySelector(`.${$ir.prefix("layout-dialog-body")}`).addEventListener("click", (e) => {
-      const li = e.target.closest("li");
-      if (li) {
-        this.dispatch("layoutSelected", li.__layout);
-        this.#resolve(li.__layout);
-        this.dialog.remove();
+    this.dialog.content
+      .querySelector(`.${$ir.prefix("layout-dialog-body")}`)
+      .addEventListener("click", (e) => {
+        const card = e.target.closest(`.${$ir.prefix("layout-card")}`);
+        if (card) {
+          this.dispatch("layoutSelected", card.__layout);
+          this.#resolve(card.__layout);
+          this.dialog.remove();
+        }
+      });
+  }
+
+  _buildPreviewCard(layout) {
+    const card = document.createElement("div");
+    card.className = $ir.prefix("layout-card");
+    card.__layout = layout;
+
+    const wrap = document.createElement("div");
+    wrap.className = $ir.prefix("layout-preview-wrap");
+
+    // Use real module rendering if a renderer was supplied
+    const page = this.renderPreview
+      ? this.renderPreview(layout)
+      : this._fallbackPage(layout);
+
+    page.classList.add($ir.prefix("layout-preview-page"));
+    page.style.pointerEvents = "none";
+    wrap.appendChild(page);
+    card.appendChild(wrap);
+
+    const label = document.createElement("div");
+    label.className = $ir.prefix("layout-card-label");
+    label.textContent = layout.title;
+    card.appendChild(label);
+
+    return card;
+  }
+
+  // Coloured-block fallback when no renderer is provided
+  _fallbackPage(layout) {
+    const MODULE_COLORS = {
+      text: "#dbeafe", richtext: "#dbeafe",
+      image: "#f3f4f6", shape: "#fae8ff",
+      chart: "#d1fae5", gallery: "#fef3c7",
+    };
+    const page = document.createElement("div");
+    (layout.components || []).forEach((comp) => {
+      const block = document.createElement("div");
+      if (comp.css) block.style.cssText = comp.css;
+      block.style.position = "absolute";
+      block.style.borderRadius = "3px";
+      if (comp.config?.name === "image" && comp.config.file) {
+        const m = comp.config.file.match(/placehold\.co\/\d+x\d+\/([0-9a-f]{6})/i);
+        if (m) block.style.backgroundColor = `#${m[1]}`;
       }
+      if (!block.style.backgroundColor)
+        block.style.backgroundColor = MODULE_COLORS[comp.config?.name] || "#f3f4f6";
+      if (!block.style.height && !block.style.minHeight)
+        block.style.minHeight = "34px";
+      page.appendChild(block);
     });
+    return page;
   }
 
   #defaults() {
     return {
-      width: "500px",
+      width: "600px",
       mode: "modal",
       footer: false,
       header: true,
@@ -466,6 +507,7 @@ export class PageTemplateDialog extends CDialog {
     super();
     this.settings = Object.assign({}, this.#defaults(), options);
     this.templates = Array.isArray(options.templates) ? options.templates : [];
+    this.renderPreview = options.renderPreview || null;
     this.build();
     this.title("Insert page");
     this.displayTemplates();
@@ -481,29 +523,15 @@ export class PageTemplateDialog extends CDialog {
     const order = [];
     this.templates.forEach((tpl) => {
       const cat = tpl.category || "General";
-      if (!grouped[cat]) {
-        grouped[cat] = [];
-        order.push(cat);
-      }
+      if (!grouped[cat]) { grouped[cat] = []; order.push(cat); }
       grouped[cat].push(tpl);
     });
 
     order.forEach((cat) => {
-      const heading = $(`<div class="${$ir.prefix("layout-category")}">${cat}</div>`);
-      container.appendChild(heading);
-
-      const list = $(`<ul class="${$ir.prefix("list-layouts")}" />`);
-      grouped[cat].forEach((tpl) => {
-        const li = $(
-          `<li data-tpl="${tpl.id}">
-            <div class="layout-title">${tpl.title}</div>
-            <div class="layout-description">${tpl.description || ""}</div>
-          </li>`
-        );
-        li.__tpl = tpl;
-        list.appendChild(li);
-      });
-      container.appendChild(list);
+      container.appendChild($(`<div class="${$ir.prefix("layout-category")}">${cat}</div>`));
+      const grid = $(`<div class="${$ir.prefix("layout-preview-grid")}" />`);
+      grouped[cat].forEach((tpl) => grid.appendChild(this._buildPreviewCard(tpl)));
+      container.appendChild(grid);
     });
 
     this.content(container);
@@ -511,18 +539,68 @@ export class PageTemplateDialog extends CDialog {
     this.dialog.content
       .querySelector(`.${$ir.prefix("layout-dialog-body")}`)
       .addEventListener("click", (e) => {
-        const li = e.target.closest("li");
-        if (li) {
-          this.dispatch("templateSelected", li.__tpl);
-          this.#resolve(li.__tpl);
+        const card = e.target.closest(`.${$ir.prefix("layout-card")}`);
+        if (card) {
+          this.dispatch("templateSelected", card.__tpl);
+          this.#resolve(card.__tpl);
           this.dialog.remove();
         }
       });
   }
 
+  _buildPreviewCard(tpl) {
+    const card = document.createElement("div");
+    card.className = $ir.prefix("layout-card");
+    card.__tpl = tpl;
+
+    const wrap = document.createElement("div");
+    wrap.className = $ir.prefix("layout-preview-wrap");
+
+    const page = this.renderPreview
+      ? this.renderPreview(tpl)
+      : this._fallbackPage(tpl);
+
+    page.classList.add($ir.prefix("layout-preview-page"));
+    page.style.pointerEvents = "none";
+    wrap.appendChild(page);
+    card.appendChild(wrap);
+
+    const label = document.createElement("div");
+    label.className = $ir.prefix("layout-card-label");
+    label.textContent = tpl.title;
+    card.appendChild(label);
+
+    return card;
+  }
+
+  _fallbackPage(tpl) {
+    const MODULE_COLORS = {
+      text: "#dbeafe", richtext: "#dbeafe",
+      image: "#f3f4f6", shape: "#fae8ff",
+      chart: "#d1fae5", gallery: "#fef3c7",
+    };
+    const page = document.createElement("div");
+    (tpl.components || []).forEach((comp) => {
+      const block = document.createElement("div");
+      if (comp.css) block.style.cssText = comp.css;
+      block.style.position = "absolute";
+      block.style.borderRadius = "3px";
+      if (comp.config?.name === "image" && comp.config.file) {
+        const m = comp.config.file.match(/placehold\.co\/\d+x\d+\/([0-9a-f]{6})/i);
+        if (m) block.style.backgroundColor = `#${m[1]}`;
+      }
+      if (!block.style.backgroundColor)
+        block.style.backgroundColor = MODULE_COLORS[comp.config?.name] || "#f3f4f6";
+      if (!block.style.height && !block.style.minHeight)
+        block.style.minHeight = "34px";
+      page.appendChild(block);
+    });
+    return page;
+  }
+
   #defaults() {
     return {
-      width: "500px",
+      width: "600px",
       mode: "modal",
       footer: false,
       header: true,

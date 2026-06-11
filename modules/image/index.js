@@ -13,6 +13,7 @@ Editor.addModule({
     },
     {
       label: "Radius",
+      propType: "style",
       props: {
         type: "number",
         min: 0,
