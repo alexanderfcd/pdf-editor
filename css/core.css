@@ -55,7 +55,7 @@
   margin: 50px auto 0;
   /*padding: 20mm;*/
 
-  transition: transform 0.5s;
+  transition: transform 0.5s, opacity 0.3s;
   page-break-after: always;
   break-after: always;
 

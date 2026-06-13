@@ -173,10 +173,34 @@ export class Editor extends Preview {
     dlg.disable();
     dlg.open();
 
+    // Track whether we've already recorded the "before" state for the current
+    // element interaction. Reset whenever the active node changes so each new
+    // interaction records a fresh before/after pair.
+    let _guiBeforeRecorded = false;
+
     this.guiEditor = new GUIEditor({
       target: dlg.node,
       schema: fields,
-    }).on("change", (data) => {
+    });
+
+    // Record the "before" state once per element interaction — the CSS as it
+    // stands *before* the user first moves a slider.
+    this.guiEditor.on("beforeChange", () => {
+      if (this.activeNode() && !_guiBeforeRecorded) {
+        _guiBeforeRecorded = true;
+        this.stateManager.record(
+          {
+            id: this.activeNode().dataset.id,
+            value: this.activeNode().getAttribute("style"),
+            type: "css",
+          },
+          true // immediate — must land in history before the "after" record
+        );
+      }
+    });
+
+    // Record the "after" state (debounced so rapid slider moves coalesce).
+    this.guiEditor.on("change", (data) => {
       if (this.activeNode()) {
         data.forEach((o) => {
           this.activeNode().style[o.prop || o.name] = o.value;
@@ -185,22 +209,19 @@ export class Editor extends Preview {
 
         this.activeNode().moveable.updateRect();
 
-        let immediate =
-          this.activeNode().dataset.id !==
-          this.stateManager.state.state()[0].id;
-
         this.stateManager.record(
           {
             id: this.activeNode().dataset.id,
             value: this.activeNode().getAttribute("style"),
             type: "css",
           },
-          immediate
+          false // debounced
         );
       }
     });
 
     this.on("activeNode", (node) => {
+      _guiBeforeRecorded = false; // reset so the next element records a fresh pair
       if (node) {
         dlg.enable();
       } else {

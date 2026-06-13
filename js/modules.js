@@ -397,19 +397,31 @@ export const ModulesInit = (instance) => {
 
   $ir.componentHandle.on("delete", (target) => {
     saveModuleStyle(target);
-    console.log(target)
 
+    const idm = target.dataset.id;
+    const layout = getOwnerId(target);
+    const config = getModuleConfig(target);
+
+    // "Before" state — element info needed to restore on undo
     instance.stateManager.record({
       type: "deletion",
-      id: target.dataset.id,
-      value: getModuleConfig(target),
-      layout: getOwnerId(target),
-    });
+      idm,
+      value: config,
+      layout,
+    }, true);
 
     target.moveable.destroy();
     target.remove();
     instance.activeNode(null);
     handle.target(null);
+
+    // "After" state — tombstone so undo lands at the correct index.
+    // Applying this on redo re-deletes the element.
+    instance.stateManager.record({
+      type: "reDelete",
+      id: idm,
+      layout,
+    }, true);
   });
 
   const mdHandle = (e) => {

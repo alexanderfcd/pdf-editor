@@ -2,6 +2,7 @@ import { CreateBase } from "./core.js";
 import { LayoutDialog, ModuleDialog, PageTemplateDialog } from "./dialog.js";
 import { renderModule } from "./module/module.js";
 import { createModule } from "./modules.js";
+import { getModuleConfig, saveModuleStyle } from "./module/module-config.js";
 
 const SECTION_LAYOUTS = [
   // ── Hero ─────────────────────────────────────────────
@@ -668,94 +669,103 @@ class LayoutBuilderService extends CreateBase {
   }
 
   delete(target) {
-    if (confirm("Are you sure you want to delete selected element?")) {
-      if (
-        target.parentNode.firstElementChild ===
-        target.parentNode.lastElementChild
-      ) {
-        console.log(target);
-      } else {
-        target.style.opacity = 0;
-        const handleEnd = () => {
-          target.remove();
-          this.dispatch("delete", target);
-          this.dispatch("change");
-        };
+    // Prevent deleting the last remaining section
+    const sectionCount = target.parentNode.querySelectorAll(".section").length;
+    if (sectionCount <= 1) return;
 
-        target.addEventListener("transitionend", handleEnd);
-      }
+    if (confirm("Are you sure you want to delete this page?")) {
+      const sectionData = this._serializeSection(target);
+      const id = sectionData.id;
+      const sectionsEl = target.parentNode;
+
+      // Record both states synchronously before the animation so undo/redo is
+      // immediately consistent even if the user acts during the fade animation.
+      this.root.stateManager.record({ type: "sectionRestore", ...sectionData }, true); // undo
+      this.root.stateManager.record({ type: "sectionRemove", id }, true);              // redo
+
+      target.style.opacity = 0;
+      const handleEnd = () => {
+        target.removeEventListener("transitionend", handleEnd);
+        target.remove();
+        this.buttonsVisibility(sectionsEl);
+        this.dispatch("delete", target);
+        this.dispatch("change");
+      };
+      target.addEventListener("transitionend", handleEnd);
     }
   }
   moveUp(target) {
     let prev = target.previousElementSibling;
-    if (!prev) return;
-    let offTarget = target.getBoundingClientRect();
-    let offPrev = prev.getBoundingClientRect();
-    let to = 0;
+    if (!prev || !prev.classList.contains("section")) return;
 
-    if (offTarget.top > offPrev.top) {
-      to = -(offTarget.top - offPrev.top);
-    }
+    const id = target.dataset.id;
 
-    target.style.transform = "translateY(" + to + "px)";
-    prev.style.transform = "translateY(" + -to + "px)";
+    // Record both states synchronously — history is immediately correct.
+    this.root.stateManager.record({ type: "sectionMoveDown", id }, true); // undo
+    this.root.stateManager.record({ type: "sectionMoveUp", id }, true);   // redo
 
-    const handleEnd = () => {
-      //prev.scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
-      prev.parentNode.insertBefore(target, prev);
+    // FLIP technique: capture old positions, move DOM immediately, animate visually.
+    const tRect = target.getBoundingClientRect();
+    const pRect = prev.getBoundingClientRect();
 
-      prev.style.transition = "none";
-      target.style.transition = "none";
+    // Synchronous DOM move — undo/redo is safe from this point forward.
+    prev.parentNode.insertBefore(target, prev);
 
-      setTimeout(() => {
-        target.style.transition = "";
-        prev.style.transition = "";
-      });
+    // Snap elements to their old visual positions (no transition).
+    target.style.transition = "none";
+    prev.style.transition = "none";
+    target.style.transform = `translateY(${tRect.top - pRect.top}px)`;
+    prev.style.transform = `translateY(${pRect.top - tRect.top}px)`;
 
-      target.style.transform = "";
-      prev.style.transform = "";
+    // Force reflow so the snap is applied before re-enabling transitions.
+    void target.offsetHeight;
 
-      target.removeEventListener("transitionend", handleEnd);
-      this.dispatch("change");
-      this.dispatch("moveUp", target);
-    };
+    // Animate to final positions (transform: none).
+    target.style.transition = "";
+    prev.style.transition = "";
+    target.style.transform = "";
+    prev.style.transform = "";
 
-    target.addEventListener("transitionend", handleEnd);
+    this.buttonsVisibility(target.parentNode);
+    this.dispatch("change");
+    this.dispatch("moveUp", target);
   }
 
   moveDown(target) {
     let next = target.nextElementSibling;
-    if (!next) return;
-    let offTarget = target.getBoundingClientRect();
-    let offnext = next.getBoundingClientRect();
-    let to = 0;
+    if (!next || !next.classList.contains("section")) return;
 
-    if (offTarget.top < offnext.top) {
-      to = -(offTarget.top - offnext.top);
-    }
-    target.style.transform = "translateY(" + to + "px)";
-    next.style.transform = "translateY(" + -to + "px)";
-    const handleEnd = () => {
-      //next.scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
-      next.parentNode.insertBefore(next, target);
+    const id = target.dataset.id;
 
-      next.style.transition = "none";
-      target.style.transition = "none";
+    // Record both states synchronously — history is immediately correct.
+    this.root.stateManager.record({ type: "sectionMoveUp", id }, true);   // undo
+    this.root.stateManager.record({ type: "sectionMoveDown", id }, true); // redo
 
-      setTimeout(() => {
-        target.style.transition = "";
-        next.style.transition = "";
-      });
+    // FLIP technique: capture old positions, move DOM immediately, animate visually.
+    const tRect = target.getBoundingClientRect();
+    const nRect = next.getBoundingClientRect();
 
-      target.style.transform = "";
-      next.style.transform = "";
+    // Synchronous DOM move — undo/redo is safe from this point forward.
+    next.parentNode.insertBefore(next, target);
 
-      target.removeEventListener("transitionend", handleEnd);
-      this.dispatch("change");
-      this.dispatch("moveDown", target);
-    };
+    // Snap elements to their old visual positions (no transition).
+    target.style.transition = "none";
+    next.style.transition = "none";
+    target.style.transform = `translateY(${tRect.top - nRect.top}px)`;
+    next.style.transform = `translateY(${nRect.top - tRect.top}px)`;
 
-    target.addEventListener("transitionend", handleEnd);
+    // Force reflow so the snap is applied before re-enabling transitions.
+    void target.offsetHeight;
+
+    // Animate to final positions (transform: none).
+    target.style.transition = "";
+    next.style.transition = "";
+    target.style.transform = "";
+    next.style.transform = "";
+
+    this.buttonsVisibility(target.parentNode);
+    this.dispatch("change");
+    this.dispatch("moveDown", target);
   }
 
   clone(target) {
@@ -778,7 +788,7 @@ class LayoutBuilderService extends CreateBase {
       target.querySelector(".section-content").getAttribute("style")
     );
     clone.dataset.id = $ir.id();
- 
+
     target.after(clone);
 
     target.querySelectorAll(".component").forEach((e) => {
@@ -790,6 +800,12 @@ class LayoutBuilderService extends CreateBase {
     this.nav(clone);
     this.dispatch("change");
     this.dispatch("clone", clone);
+
+    // Record undo/redo pair — undo removes the clone, redo adds it back
+    const cloneData = this._serializeSection(clone);
+    this.root.stateManager.record({ type: "sectionRemove", id: cloneData.id }, true);
+    this.root.stateManager.record({ type: "sectionRestore", ...cloneData }, true);
+
     clone.scrollIntoView({
       behavior: "smooth",
     });
@@ -878,6 +894,26 @@ class LayoutBuilderService extends CreateBase {
     section.appendChild(btn);
   }
 
+  /** Serialize a section into a plain object suitable for state recording. */
+  _serializeSection(section) {
+    const components = [];
+    section.querySelectorAll(":scope > .section-content > .component").forEach((comp) => {
+      saveModuleStyle(comp); // ensure latest CSS is in the config
+      components.push({
+        id: comp.dataset.id,
+        config: getModuleConfig(comp),
+        css: comp.getAttribute("style") || "",
+      });
+    });
+    const prevSibling = section.previousElementSibling;
+    return {
+      id: section.dataset.id,
+      // afterId = null means "insert before the first section"
+      afterId: prevSibling?.classList.contains("section") ? prevSibling.dataset.id : null,
+      components,
+    };
+  }
+
   async insertPage(afterSection) {
     const dlg = new PageTemplateDialog({
       templates: PAGE_TEMPLATES,
@@ -914,6 +950,11 @@ class LayoutBuilderService extends CreateBase {
     this.nav(section);
     this.buttonsVisibility(section.parentElement);
     this.dispatch("change");
+
+    // Record undo/redo pair — undo removes the new page, redo adds it back
+    const sectionData = this._serializeSection(section);
+    this.root.stateManager.record({ type: "sectionRemove", id: sectionData.id }, true);
+    this.root.stateManager.record({ type: "sectionRestore", ...sectionData }, true);
 
     section.scrollIntoView({ behavior: "smooth" });
   }
